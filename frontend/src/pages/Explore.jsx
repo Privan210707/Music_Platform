@@ -1,45 +1,47 @@
+import { Link } from "react-router-dom";
+
 function Explore() {
 
   const genres = [
     {
-      title: "Pop",
-      image: "/chillvibes.png",
-      bg: "bg-[#2bb3c0]"
+      name: "Pop",
+      image: "/pop.png",
+      bg: "bg-[#2db1bd]"
     },
     {
-      title: "Hip-Hop",
+      name: "Hip-Hop",
       image: "/hip-hop.png",
-      bg: "bg-[#e88443]"
+      bg: "bg-[#ed873c]"
     },
     {
-      title: "Mood",
+      name: "Mood",
       image: "/mood.png",
-      bg: "bg-[#ff3838]"
+      bg: "bg-[#ff3942]"
     },
     {
-      title: "Soul",
+      name: "Soul",
       image: "/soul.png",
-      bg: "bg-[#df46a5]"
+      bg: "bg-[#dc4098]"
     },
     {
-      title: "K-pop",
+      name: "K-pop",
       image: "/k-pop.png",
-      bg: "bg-[#aa48f2]"
+      bg: "bg-[#ae3ce8]"
     },
     {
-      title: "Rain & Monsoon",
+      name: "Rain & Monsoon",
       image: "/rain.png",
-      bg: "bg-[#1970d0]"
+      bg: "bg-[#2673c9]"
     },
     {
-      title: "Classical",
+      name: "Classical",
       image: "/classical.png",
-      bg: "bg-[#f2b544]"
+      bg: "bg-[#f5b83f]"
     },
     {
-      title: "Summer",
-      image: "/clouds.png",
-      bg: "bg-[#8edb61]"
+      name: "Summer",
+      image: "/summer.png",
+      bg: "bg-[#8bd954]"
     }
   ];
 
@@ -54,7 +56,7 @@ function Explore() {
       image: "/arijit.png"
     },
     {
-      name: "Rose’",
+      name: "Rose",
       image: "/rose.png"
     },
     {
@@ -67,63 +69,40 @@ function Explore() {
     },
     {
       name: "Justin Bieber",
-      image: "/justein.png"
+      image: "/justin.png"
     }
   ];
 
 
   return (
 
-    <div className="min-h-screen bg-black text-white px-4 sm:px-6 md:px-8 lg:px-10 py-6 md:py-8">
+    <div className="min-h-screen bg-black text-white">
 
-      
+      <main className="px-5 py-6 sm:px-8 lg:px-10">
 
-      <div className="flex justify-end items-center gap-4 mb-5 md:mb-7">
-
-        <span className="text-lg md:text-xl">
-          ♧
-        </span>
-
-        <div className="w-5 h-5 rounded-full bg-[#ffbd42] border-2 border-[#ff4f9a]">
-        </div>
-
-      </div>
+     
+        <h1 className="mb-7 text-3xl font-bold sm:text-4xl">
+          Explore
+        </h1>
 
 
-      
-
-      <h1 className="text-2xl sm:text-3xl font-bold">
-        Explore
-      </h1>
-
-
-      
-
-      <section className="mt-7 md:mt-8">
-
-        <h2 className="text-lg sm:text-xl font-bold mb-4 md:mb-5">
-          Genres
-        </h2>
-
-
-        <div className="grid grid-cols-1 min-[450px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
           {genres.map((genre) => (
 
             <div
-              key={genre.title}
-              className={`relative h-[115px] sm:h-[125px] md:h-[130px] rounded-xl overflow-hidden ${genre.bg}`}
+              key={genre.name}
+              className={`${genre.bg} relative h-[120px] overflow-hidden rounded-xl p-5 transition hover:scale-[1.02]`}
             >
 
-              <h3 className="absolute top-3 left-4 sm:left-5 z-10 text-base sm:text-lg font-bold">
-                {genre.title}
-              </h3>
-
+              <h2 className="text-lg font-bold">
+                {genre.name}
+              </h2>
 
               <img
                 src={genre.image}
-                alt={genre.title}
-                className="absolute w-[85px] h-[85px] sm:w-[100px] sm:h-[100px] md:w-[105px] md:h-[105px] object-cover right-[-4px] bottom-[-8px] rotate-[-35deg]"
+                alt={genre.name}
+                className="absolute bottom-[-15px] right-[-5px] h-[115px] w-[125px] rotate-[15deg] object-cover shadow-lg"
               />
 
             </div>
@@ -132,44 +111,49 @@ function Explore() {
 
         </div>
 
-      </section>
+
+        <section className="mt-9 pb-10">
+
+          <h2 className="mb-7 text-2xl font-bold sm:text-3xl">
+            Your Favorite Artists
+          </h2>
 
 
+          <div className="grid grid-cols-2 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
 
-      <section className="mt-8 md:mt-10">
+            {artists.map((artist) => (
 
-        <h2 className="text-lg sm:text-xl font-bold mb-5 md:mb-6">
-          Your Favorite Artists
-        </h2>
+              <div
+                key={artist.name}
+                className="flex flex-col items-center"
+              >
 
+             
+                <Link to={`/artist/${artist.name.toLowerCase().replace(" ", "-")}`}>
 
-        <div className="grid grid-cols-2 min-[450px]:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-x-4 gap-y-7">
+                  <img
+                    src={artist.image}
+                    alt={artist.name}
+                    className="h-32 w-32 rounded-full object-cover transition duration-300 hover:scale-105 sm:h-36 sm:w-36 lg:h-40 lg:w-40"
+                  />
 
-          {artists.map((artist) => (
-
-            <div
-              key={artist.name}
-              className="text-center cursor-pointer"
-            >
-
-              <img
-                src={artist.image}
-                alt={artist.name}
-                className="w-20 h-20 sm:w-24 sm:h-24 md:w-[100px] md:h-[100px] lg:w-[105px] lg:h-[105px] mx-auto object-cover rounded-full"
-              />
+                </Link>
 
 
-              <h3 className="mt-2 md:mt-3 text-sm sm:text-base font-bold truncate">
-                {artist.name}
-              </h3>
+                
+                <p className="mt-3 text-center text-sm font-bold sm:text-base">
+                  {artist.name}
+                </p>
 
-            </div>
+              </div>
 
-          ))}
+            ))}
 
-        </div>
+          </div>
 
-      </section>
+        </section>
+
+      </main>
 
     </div>
 

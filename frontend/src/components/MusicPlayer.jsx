@@ -1,20 +1,17 @@
 function MusicPlayer() {
-
   return (
 
-    <aside className="hidden lg:block w-[240px] bg-[#10151e] p-5">
+    <aside className="hidden lg:block fixed right-0 top-0 w-[240px] h-screen bg-[#10151e] p-5 overflow-y-auto">
 
       <h2 className="text-lg font-bold mb-5">
         Now Playing
       </h2>
 
-
       <img
-        src="/midnight.png"
-        alt="Midnight"
+        src="/music player.png"
+        alt="Moon"
         className="w-full h-[190px] object-cover rounded-xl"
       />
-
 
       <div className="mt-4">
 
@@ -28,7 +25,6 @@ function MusicPlayer() {
 
       </div>
 
-
       <div className="mt-6">
 
         <div className="h-1 bg-gray-700 rounded-full">
@@ -36,7 +32,6 @@ function MusicPlayer() {
           <div className="h-1 w-[35%] bg-purple-500 rounded-full"></div>
 
         </div>
-
 
         <div className="flex justify-between text-xs text-gray-500 mt-2">
 
@@ -47,7 +42,6 @@ function MusicPlayer() {
         </div>
 
       </div>
-
 
       <div className="flex justify-center items-center gap-5 mt-6">
 
@@ -73,13 +67,11 @@ function MusicPlayer() {
 
       </div>
 
-
       <div className="mt-8">
 
         <h3 className="font-bold mb-4">
           Recently Played
         </h3>
-
 
         <div className="space-y-4">
 
@@ -91,6 +83,7 @@ function MusicPlayer() {
             />
 
             <div>
+
               <p className="text-sm font-bold">
                 Good Days
               </p>
@@ -98,10 +91,10 @@ function MusicPlayer() {
               <p className="text-xs text-gray-500">
                 One 4
               </p>
+
             </div>
 
           </div>
-
 
           <div className="flex items-center gap-3">
 
@@ -111,6 +104,7 @@ function MusicPlayer() {
             />
 
             <div>
+
               <p className="text-sm font-bold">
                 Midnights
               </p>
@@ -118,10 +112,10 @@ function MusicPlayer() {
               <p className="text-xs text-gray-500">
                 Taylor Swift
               </p>
+
             </div>
 
           </div>
-
 
           <div className="flex items-center gap-3">
 
@@ -131,6 +125,7 @@ function MusicPlayer() {
             />
 
             <div>
+
               <p className="text-sm font-bold">
                 Flowers
               </p>
@@ -138,10 +133,10 @@ function MusicPlayer() {
               <p className="text-xs text-gray-500">
                 Olivia
               </p>
+
             </div>
 
           </div>
-
 
           <div className="flex items-center gap-3">
 
@@ -151,6 +146,7 @@ function MusicPlayer() {
             />
 
             <div>
+
               <p className="text-sm font-bold">
                 As It Was
               </p>
@@ -158,6 +154,7 @@ function MusicPlayer() {
               <p className="text-xs text-gray-500">
                 Harry Styles
               </p>
+
             </div>
 
           </div>

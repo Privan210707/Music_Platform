@@ -1,142 +1,153 @@
-
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Landing() {
+  const navigate = useNavigate();
 
   return (
+    <div className="min-h-screen bg-black text-white">
 
-    <div className="bg-white text-black min-h-screen">
+      <nav className="flex h-[48px] items-center justify-between border-b border-gray-700 px-4 md:px-8">
 
-     
+        <div className="flex items-center gap-2">
 
-      <header className="bg-black text-white">
+          <div className="flex items-end gap-[2px]">
+            <span className="h-3 w-[2px] bg-purple-500"></span>
+            <span className="h-5 w-[2px] bg-purple-500"></span>
+            <span className="h-7 w-[2px] bg-purple-500"></span>
+            <span className="h-4 w-[2px] bg-pink-500"></span>
+            <span className="h-2 w-[2px] bg-purple-500"></span>
+          </div>
 
-        <div className="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
-
-          <h1 className="text-2xl font-bold">
-
-            <span className="text-purple-500">
-              〽
-            </span>
-
+          <span className="text-sm font-extrabold italic">
             Vibe
-
-          </h1>
-
-
-          <nav className="flex gap-6 text-sm">
-
-            <a href="#features">
-              Features
-            </a>
-
-            <Link to="/signup">
-              Sign Up
-            </Link>
-
-            <Link to="/login">
-              Log In
-            </Link>
-
-          </nav>
+          </span>
 
         </div>
 
-      </header>
+        <div className="flex items-center gap-4 text-xs font-extrabold md:gap-7 md:text-sm">
+
+          <a href="#why" className="hover:text-purple-400">
+            Support
+          </a>
+
+          <a href="#footer" className="hover:text-purple-400">
+            Download
+          </a>
+
+          <span>|</span>
+
+          <button
+            onClick={() => navigate("/signup")}
+            className="hover:text-purple-400"
+          >
+            Sign Up
+          </button>
+
+          <button
+            onClick={() => navigate("/login")}
+            className="hover:text-purple-400"
+          >
+            Log In
+          </button>
+
+        </div>
+
+      </nav>
 
 
-    
+      <section className="flex h-[125px] bg-black md:h-[160px]">
 
-      <section className="relative bg-black text-white">
+        <div className="flex w-[52%] flex-col justify-center px-4 md:px-8">
 
-        <img
-          src="/banner.png"
-          className="w-full h-[420px] object-cover opacity-60"
-        />
-
-        <div className="absolute inset-0 flex flex-col justify-center items-center text-center px-5">
-
-          <h1 className="text-4xl md:text-6xl font-bold">
-            Play millions of songs
+          <h1 className="text-lg font-extrabold leading-tight md:text-3xl">
+            Play millions of songs for free
           </h1>
 
-          <p className="mt-5 text-gray-300">
-            Music for every mood, every moment.
-          </p>
-
-
-          <Link
-            to="/signup"
-            className="mt-7 bg-white text-black px-8 py-3 rounded-full font-bold hover:scale-105 transition"
+          <button
+            onClick={() => navigate("/signup")}
+            className="mt-5 w-fit rounded-lg bg-gray-200 px-7 py-3 text-xs font-extrabold text-black hover:bg-white"
           >
             Sign Up Free
-          </Link>
+          </button>
+
+        </div>
+
+        <div className="w-[48%] overflow-hidden">
+
+          <img
+            src="/lnding camera.png"
+            alt="Camera"
+            className="h-full w-full object-cover"
+          />
 
         </div>
 
       </section>
 
 
-      
-
       <section
-        id="features"
-        className="max-w-6xl mx-auto px-6 py-16"
+        id="why"
+        className="bg-white px-3 py-3 text-center text-black md:py-5"
       >
 
-        <h2 className="text-3xl font-bold text-center">
+        <h2 className="text-2xl font-extrabold md:text-3xl">
           Why Vibe?
         </h2>
 
+        <div className="mx-auto mt-4 grid max-w-4xl grid-cols-3 gap-3 md:mt-5">
 
-        <div className="grid md:grid-cols-3 gap-10 mt-12">
+          <div>
 
-          <div className="text-center">
-
-            <div className="text-4xl text-purple-500">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-3xl text-white md:h-24 md:w-24">
               ♫
             </div>
 
-            <h3 className="font-bold text-xl mt-4">
+            <h3 className="mt-3 text-xs font-extrabold md:text-sm">
               Play your favorites
             </h3>
 
-            <p className="text-gray-500 mt-3">
-              Listen to music you love anytime.
+            <p className="mt-2 text-[8px] font-bold leading-tight md:text-[10px]">
+              Listen to the songs you love,
+              <br />
+              and discover new music
             </p>
 
           </div>
 
 
-          <div className="text-center">
+          <div>
 
-            <div className="text-4xl text-purple-500">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-3xl text-white md:h-24 md:w-24">
               ♥
             </div>
 
-            <h3 className="font-bold text-xl mt-4">
+            <h3 className="mt-3 text-xs font-extrabold md:text-sm">
               Make it yours
             </h3>
 
-            <p className="text-gray-500 mt-3">
-              Create playlists and save music.
+            <p className="mt-2 text-[8px] font-bold leading-tight md:text-[10px]">
+              Tell us what you like, and we'll
+              <br />
+              recommend music for you.
             </p>
 
           </div>
 
 
-          <div className="text-center">
+          <div>
 
-            <div className="text-4xl text-purple-500">
-              ◉
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-3xl text-white md:h-24 md:w-24">
+              ●
             </div>
 
-            <h3 className="font-bold text-xl mt-4">
-              Discover music
+            <h3 className="mt-3 text-xs font-extrabold md:text-sm">
+              Playlists made easy
             </h3>
 
-            <p className="text-gray-500 mt-3">
-              Find something new every day.
+            <p className="mt-2 text-[8px] font-bold leading-tight md:text-[10px]">
+              We'll help you make playlists,
+              <br />
+              Or enjoy playlists.
             </p>
 
           </div>
@@ -146,101 +157,88 @@ function Landing() {
       </section>
 
 
-     
+      <section className="relative h-[200px] overflow-hidden md:h-[230px]">
 
-      <section className="bg-[#f36b83] text-white text-center py-16">
+        <img
+          src="/landing girl.png"
+          alt="Girl listening to music"
+          className="h-full w-full object-cover"
+        />
 
-        <h2 className="text-4xl font-bold">
+        <h2 className="absolute left-5 top-1/2 -translate-y-1/2 text-2xl font-extrabold italic md:left-8 md:text-4xl">
           Ready? Let's play.
         </h2>
-
-        <Link
-          to="/signup"
-          className="inline-block mt-7 bg-white text-black px-8 py-3 rounded-full font-bold"
-        >
-          Get Started
-        </Link>
 
       </section>
 
 
-     
+      <footer
+        id="footer"
+        className="grid min-h-[190px] grid-cols-4 gap-3 bg-black px-4 py-7 md:min-h-[200px] md:px-8"
+      >
 
-      <footer className="bg-black text-white py-12">
+        <div className="flex items-start gap-2 text-sm font-extrabold">
 
-        <div className="max-w-6xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
-
-          <div>
-
-            <h2 className="text-xl font-bold">
-              <span className="text-purple-500">
-                〽
-              </span>
-
-              Vibe
-            </h2>
-
+          <div className="flex items-end gap-[2px] pt-1">
+            <span className="h-3 w-[2px] bg-purple-500"></span>
+            <span className="h-5 w-[2px] bg-purple-500"></span>
+            <span className="h-7 w-[2px] bg-purple-500"></span>
+            <span className="h-4 w-[2px] bg-pink-500"></span>
+            <span className="h-2 w-[2px] bg-purple-500"></span>
           </div>
 
+          Vibe
 
-          <div>
-
-            <h3 className="font-bold mb-3">
-              Company
-            </h3>
-
-            <p className="text-gray-400">
-              About
-            </p>
-
-            <p className="text-gray-400">
-              Jobs
-            </p>
-
-          </div>
+        </div>
 
 
-          <div>
+        <div className="text-[10px] font-bold leading-tight md:text-xs">
 
-            <h3 className="font-bold mb-3">
-              Communities
-            </h3>
+          <h3 className="mb-2">
+            Company
+          </h3>
 
-            <p className="text-gray-400">
-              For Artists
-            </p>
+          <p className="underline">About</p>
+          <p className="underline">Jobs</p>
+          <p className="underline">For the Record</p>
 
-            <p className="text-gray-400">
-              Developers
-            </p>
-
-          </div>
+        </div>
 
 
-          <div>
+        <div className="text-[10px] font-bold leading-tight md:text-xs">
 
-            <h3 className="font-bold mb-3">
-              Useful Links
-            </h3>
+          <h3 className="mb-2">
+            Communities
+          </h3>
 
-            <p className="text-gray-400">
-              Support
-            </p>
+          <p className="underline">For Artists</p>
+          <p className="underline">For Creators</p>
+          <p className="underline">For Authors</p>
+          <p className="underline">Developers</p>
+          <p className="underline">Advertising</p>
+          <p className="underline">Investors</p>
+          <p className="underline">Vendors</p>
 
-            <p className="text-gray-400">
-              Web Player
-            </p>
+        </div>
 
-          </div>
+
+        <div className="text-[10px] font-bold leading-tight md:text-xs">
+
+          <h3 className="mb-2">
+            Useful Links
+          </h3>
+
+          <p className="underline">Support</p>
+          <p className="underline">Web Player</p>
+          <p className="underline">Free Mobile App</p>
+          <p className="underline">Import your music</p>
 
         </div>
 
       </footer>
 
     </div>
-
   );
 }
 
 export default Landing;
-
