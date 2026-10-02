@@ -3,11 +3,11 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .models import Song,RecentSearch
-from .serializers import SongSerializer
+from .models import Song,RecentSearch,Genre,Artist,Album
+from .serializers import SongSerializer,ArtistSerializer,GenreSerializer,AlbumSerializer
 from django.db.models import Q
 
-
+#Home Page
 class SongListView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -16,7 +16,7 @@ class SongListView(APIView):
         serializer = SongSerializer(songs, many=True)
         return Response(serializer.data)
 
-
+#Search Page
 class SongSearchView(APIView):
     def get(self, request):
         query = request.GET.get("q", "")
@@ -93,3 +93,49 @@ class RecentSearchDeleteView(APIView):
             {"message": "Search deleted"},
             status=200
         )    
+
+#Explore Page
+class GenreListView(APIView):
+    def get(self, request):
+        genres = Genre.objects.all()
+        serializer = GenreSerializer(
+            genres,
+            many=True
+        )
+        return Response(serializer.data)
+
+class ArtistListView(APIView):
+    def get(self, request):
+        artists = Artist.objects.all()
+        serializer = ArtistSerializer(
+            artists,
+            many=True
+        )
+        return Response(serializer.data)
+
+class ArtistDetailView(APIView):
+    def get(self, request, artist_name):
+        songs = Song.objects.filter(
+            artist__iexact=artist_name
+        )
+        albums = Album.objects.filter(
+            artist__iexact=artist_name
+        )
+        if not songs.exists() and not albums.exists():
+            return Response(
+                {"error": "Artist not found"},
+                status=404
+            )
+        return Response({
+            "artist": artist_name,
+            "popular_songs": SongSerializer(
+                songs,
+                many=True
+            ).data,
+            "albums": AlbumSerializer(
+                albums,
+                many=True
+            ).data
+        })    
+
+    
