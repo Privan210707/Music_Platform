@@ -40,6 +40,15 @@ class ProfileView(APIView):
         return Response({
             "email":request.user.email
         })
+
+class HomeView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        return Response({
+            "message": "Welcome to Vibe",
+            "email": request.user.email
+        })
     
 
 class LoginView(APIView):
