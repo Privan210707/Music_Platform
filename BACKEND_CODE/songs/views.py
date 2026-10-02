@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .models import Song,RecentSearch,Genre,Artist,Album
-from .serializers import SongSerializer,ArtistSerializer,GenreSerializer,AlbumSerializer
+from .models import Song,RecentSearch,Genre,Artist,Album,ArtistPlaylist
+from .serializers import SongSerializer,ArtistSerializer,GenreSerializer,AlbumSerializer,ArtistPlaylistSerializer
 from django.db.models import Q
 
 #Home Page
@@ -138,4 +138,82 @@ class ArtistDetailView(APIView):
             ).data
         })    
 
-    
+class ArtistDetailView(APIView):
+    def get(self, request, artist_name):
+        songs = Song.objects.filter(
+            artist__iexact=artist_name
+        )
+        albums = Album.objects.filter(
+            artist__iexact=artist_name
+        )
+        artist = Artist.objects.filter(
+            name__iexact=artist_name
+        ).first()
+        if not artist:
+            if not songs.exists() and not albums.exists():
+                return Response(
+                    {"error": "Artist not found"},
+                    status=404
+                )
+        artist_data = {
+            "name": artist.name if artist else artist_name,
+            "image_url": artist.image_url if artist else "",
+        }
+        return Response({
+            "artist": artist_data,
+            "popular_songs": SongSerializer(
+                songs,
+                many=True
+            ).data,
+            "albums": AlbumSerializer(
+                albums,
+                many=True
+            ).data
+        })    
+
+class AlbumDetailView(APIView):
+    def get(self, request, album_id):
+        try:
+            album = Album.objects.get(id=album_id)
+        except Album.DoesNotExist:
+            return Response(
+                {"error": "Album not found"},
+                status=404
+            )
+        songs = Song.objects.filter(
+            album=album
+        )
+        return Response({
+            "album": AlbumSerializer(album).data,
+            "songs": SongSerializer(
+                songs,
+                many=True
+            ).data
+        })    
+
+class ArtistProfileView(APIView):
+    def get(self, request, artist_name):
+        artist = Artist.objects.filter(
+            name__iexact=artist_name
+        ).first()
+        if not artist:
+            return Response(
+                {"error": "Artist not found"},
+                status=404
+            )
+        playlists = ArtistPlaylist.objects.filter(
+            artist=artist
+        )
+        return Response({
+            "id": artist.id,
+            "name": artist.name,
+            "image_url": artist.image_url,
+            "cover_image_url": artist.cover_image_url,
+            "bio": artist.bio,
+            "followers_count": artist.followers_count,
+            "following_count": artist.following_count,
+            "playlists": ArtistPlaylistSerializer(
+                playlists,
+                many=True
+            ).data
+        })    

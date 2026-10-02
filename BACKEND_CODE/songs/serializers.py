@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Song,Genre,Artist,Album
+from .models import Song,Genre,Artist,Album,ArtistPlaylist
 
 
 #Home Page
@@ -26,3 +26,11 @@ class AlbumSerializer(serializers.ModelSerializer):
         model=Album
         fields="__all__"
 
+class ArtistPlaylistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ArtistPlaylist
+        fields = [
+            "id",
+            "name",
+            "image_url"
+        ]

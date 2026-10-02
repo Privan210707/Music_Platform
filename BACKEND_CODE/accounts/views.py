@@ -52,17 +52,11 @@ class HomeView(APIView):
     
 
 class LoginView(APIView):
-
     def post(self, request):
-
         serializer = LoginSerializer(data=request.data)
-
         if serializer.is_valid():
-
             user = serializer.validated_data["user"]
-
             refresh = RefreshToken.for_user(user)
-
             return Response(
                 {
                     "message": "Login successful",
@@ -72,7 +66,6 @@ class LoginView(APIView):
                 },
                 status=status.HTTP_200_OK
             )
-
         return Response(
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST

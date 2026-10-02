@@ -8,6 +8,7 @@ class Song(models.Model):
     genre = models.CharField(max_length=100)
     image_url = models.URLField(blank=True)
     audio_url = models.URLField(blank=True)
+    album=models.ForeignKey("Album",on_delete=models.SET_NULL,null=True,blank=True,related_name="songs")
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.title
@@ -46,3 +47,14 @@ class Album(models.Model):
     image_url = models.URLField(blank=True)
     def __str__(self):
         return self.title
+
+class ArtistPlaylist(models.Model):
+    artist = models.ForeignKey(
+        Artist,
+        on_delete=models.CASCADE,
+        related_name="playlists"
+    )
+    name = models.CharField(max_length=200)
+    image_url = models.URLField(blank=True)
+    def __str__(self):
+        return self.name    
