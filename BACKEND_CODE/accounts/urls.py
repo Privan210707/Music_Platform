@@ -1,9 +1,61 @@
 from django.urls import path
-from .views import SignupView,ProfileView,LoginView,HomeView
+
+from .views import (
+    SignupView,
+    LoginView,
+    ProfileView,
+    HomeView,
+    EditProfileView,
+    FollowUserView,
+    UnfollowUserView,
+    FollowersView,
+    FollowingView
+)
 
 urlpatterns = [
-    path("signup/",SignupView.as_view(),name="signup"),
-    path("profile/",ProfileView.as_view(),name="profile"),
-    path("login/",LoginView.as_view(),name="login"),
-    path("home/",HomeView.as_view(),name="home"),
+    path(
+        "signup/",
+        SignupView.as_view(),
+        name="signup"
+    ),
+    path(
+        "login/",
+        LoginView.as_view(),
+        name="login"
+    ),
+    path(
+        "profile/",
+        ProfileView.as_view(),
+        name="profile"
+    ),
+    path(
+        "profile/edit/",
+        EditProfileView.as_view(),
+        name="edit-profile"
+    ),
+    path(
+        "profile/follow/<int:user_id>/",
+        FollowUserView.as_view(),
+        name="follow-user"
+    ),
+    path(
+        "profile/unfollow/<int:user_id>/",
+        UnfollowUserView.as_view(),
+        name="unfollow-user"
+    ),
+    path(
+        "profile/followers/",
+        FollowersView.as_view(),
+        name="followers"
+    ),
+    path(
+        "profile/following/",
+        FollowingView.as_view(),
+        name="following"
+    ),
+    path(
+        "home/",
+        HomeView.as_view(),
+        name="home"
+    ),
 ]
