@@ -13,10 +13,14 @@ django-cloudinary-storage==0.3.0
 django-cors-headers==4.9.0
 djangorestframework==3.18.1
 djangorestframework_simplejwt==5.5.1
+ HEAD
 fastapi==0.142.2
 gunicorn==26.2.0
 h11==0.16.0
 httptools==0.8.0
+
+django-cors-headers==4.9.0
+ bc217a5 (Add Docker setup and ML dependencies)
 idna==3.20
 joblib==1.6.0
 numpy==2.5.3
