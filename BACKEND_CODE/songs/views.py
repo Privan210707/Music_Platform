@@ -681,3 +681,51 @@ class ArtistFollowStatusView(APIView):
             "is_following": is_following,
             "followers_count": artist.followers_count
         })      
+
+
+import os
+import requests
+
+class MLRecommendationView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+
+        song_name = request.data.get("song_name")
+        n = request.data.get("n", 5)
+
+        if not song_name:
+            return Response(
+                {"error": "song_name is required"},
+                status=400
+            )
+
+        ml_api_url = os.getenv("ML_API_URL")
+
+        try:
+            response = requests.post(
+                f"{ml_api_url}/recommend",
+                json={
+                    "song_name": song_name,
+                    "n": n
+                },
+                timeout=10
+            )
+
+        except requests.RequestException:
+            return Response(
+                {"error": "ML recommendation service unavailable"},
+                status=503
+            )
+
+        if response.status_code != 200:
+            return Response(
+                {
+                    "error": "ML recommendation failed",
+                    "details": response.json()
+                },
+                status=response.status_code
+            )
+        return Response(response.json())

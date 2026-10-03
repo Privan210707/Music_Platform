@@ -3,7 +3,7 @@ from .views import (SongListView,SongSearchView,RecentSearchCreateView,RecentSea
 ArtistListView,GenreListView,ArtistDetailView,AlbumDetailView,ArtistProfileView,SongPlayView,
 VibeMoodsView,RecentVibesView,VibeRecommendationView,CreateVibePlaylistView,
 SongUploadView,SongShareView,SharedSongView,
-ArtistFollowView,ArtistUnfollowView,ArtistFollowersView,ArtistFollowStatusView)
+ArtistFollowView,ArtistUnfollowView,ArtistFollowersView,ArtistFollowStatusView,MLRecommendationView)
 
 
 urlpatterns = [
@@ -28,5 +28,6 @@ urlpatterns = [
     path("artists/<int:artist_id>/follow/",ArtistFollowView.as_view(),name="artist-follow"),
     path("artists/<int:artist_id>/unfollow/",ArtistUnfollowView.as_view(),name="artist-unfollow"),
     path("artists/<int:artist_id>/followers/",ArtistFollowersView.as_view(),name="artist-followers"),
-    path("artists/<int:artist_id>/follow-status/",ArtistFollowStatusView.as_view(),name="artist-folllow-status")
+    path("artists/<int:artist_id>/follow-status/",ArtistFollowStatusView.as_view(),name="artist-folllow-status"),
+    path("ml-recommend/",MLRecommendationView.as_view(),name="ml-recommend")
 ]
