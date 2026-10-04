@@ -16,8 +16,13 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          timeout: 60s
+          command_timeout: 30m
+          debug: true
 
           script: |
+            echo "Connected to EC2"
             cd ~/Music_Platform
             git pull origin main
             docker compose down
