@@ -128,42 +128,9 @@ class HomeView(APIView):
             greeting = "Good afternoon"
         else:
             greeting = "Good evening"
-        # Music For You
-        music_for_you = Song.objects.all().order_by("-created_at")[:8]
-        # Trending Now
-        trending_now = Song.objects.all().order_by("-created_at")[:8]
-        # Recently Played
-        recently_played = RecentlyPlayed.objects.filter(
-            user=request.user
-        ).select_related(
-            "song"
-        ).order_by(
-            "-played_at"
-        )[:5]
-        # Response
         return Response({
             "message": greeting,
             "email": request.user.email,
-            "music_for_you": SongSerializer(
-                music_for_you,
-                many=True
-            ).data,
-            "trending_now": SongSerializer(
-                trending_now,
-                many=True
-            ).data,
-            "recently_played": [
-                {
-                    "id": item.song.id,
-                    "title": item.song.title,
-                    "artist": item.song.artist,
-                    "genre": item.song.genre,
-                    "image_url": item.song.image_url,
-                    "audio_url": item.song.audio_url,
-                    "played_at": item.played_at
-                }
-                for item in recently_played
-            ]
         })
     
 
