@@ -7,7 +7,7 @@ from .models import Song,RecentSearch,Genre,Artist,Album,ArtistPlaylist,MoodHist
 from .serializers import SongSerializer,ArtistSerializer,GenreSerializer,AlbumSerializer,ArtistPlaylistSerializer
 from django.db.models import Q
 from library.models import RecentlyPlayed,LikedSong,Playlist,PlaylistSong
-
+from rest_framework.permissions import AllowAny
 import cloudinary.uploader
 
 from django.conf import settings
@@ -15,8 +15,7 @@ from django.conf import settings
 
 #Home Page
 class SongListView(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes=[AllowAny]
     def get(self, request):
         songs = Song.objects.all()
         serializer = SongSerializer(songs, many=True)

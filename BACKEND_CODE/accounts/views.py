@@ -124,7 +124,7 @@ class HomeView(APIView):
         hour = datetime.now().hour
         if hour < 12:
             greeting = "Good morning"
-        elif hour < 18:
+        elif hour < 16:
             greeting = "Good afternoon"
         else:
             greeting = "Good evening"
