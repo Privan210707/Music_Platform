@@ -10,14 +10,11 @@ function Landing() {
 
         <div className="flex items-center gap-2">
 
-          <div className="flex items-end gap-[2px]">
-            <span className="h-3 w-[2px] bg-purple-500"></span>
-            <span className="h-5 w-[2px] bg-purple-500"></span>
-            <span className="h-7 w-[2px] bg-purple-500"></span>
-            <span className="h-4 w-[2px] bg-pink-500"></span>
-            <span className="h-2 w-[2px] bg-purple-500"></span>
-          </div>
-
+         <img
+            src="/logo.png"
+            alt="Logo"
+            className="h-6 w-6 md:h-8 md:w-8"
+          />
           <span className="text-sm font-extrabold italic">
             Vibe
           </span>
@@ -179,13 +176,11 @@ function Landing() {
 
         <div className="flex items-start gap-2 text-sm font-extrabold">
 
-          <div className="flex items-end gap-[2px] pt-1">
-            <span className="h-3 w-[2px] bg-purple-500"></span>
-            <span className="h-5 w-[2px] bg-purple-500"></span>
-            <span className="h-7 w-[2px] bg-purple-500"></span>
-            <span className="h-4 w-[2px] bg-pink-500"></span>
-            <span className="h-2 w-[2px] bg-purple-500"></span>
-          </div>
+        <img
+            src="/logo.png"
+            alt="Logo"
+            className="h-6 w-6 md:h-8 md:w-8"
+          />
 
           Vibe
 
