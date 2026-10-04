@@ -1,143 +1,150 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Artist() {
-  const [activeTab, setActiveTab] = useState("Popular");
+  const navigate = useNavigate();
 
-  const popular = [
+  const [tab, setTab] = useState("popular");
+
+  const songs = [
     {
-      title: "Closer",
-      number: "36,288,39",
-      image: "/closer.png"
+      name: "Closer",
+      image: "/closer.png",
+      plays: "36,288,39",
     },
     {
-      title: "Without Me",
-      number: "90,398,65",
-      image: "/without.png"
+      name: "Without Me",
+      image: "/without.png",
+      plays: "90,398,65",
     },
     {
-      title: "Him & I",
-      number: "1,43,759,08",
-      image: "/him.png"
+      name: "Him & I",
+      image: "/him.png",
+      plays: "1,43,759,08",
     },
     {
-      title: "Boy With Luv",
-      number: "1,36,642,43",
-      image: "/boy with.png"
-    }
+      name: "Boy With Luv",
+      image: "/boy with.png",
+      plays: "1,36,642,43",
+    },
   ];
 
   const albums = [
     {
-      title: "The Great Impersonator",
+      id: "great-impersonator",
+      name: "The Great Impersonator",
       year: "2025",
-      image: "/the great.png"
+      image: "/the great.png",
     },
     {
-      title: "Manic",
+      id: "manic",
+      name: "Manic",
       year: "2020",
-      image: "/manic.png"
+      image: "/manic.png",
     },
     {
-      title: "Badlands",
+      id: "badlands",
+      name: "Badlands",
       year: "2018",
-      image: "/badland.png"
+      image: "/badland.png",
     },
     {
-      title: "Hopeless Fountain Kingdom",
+      id: "hopeless-fountain-kingdom",
+      name: "Hopeless fountain kingdom",
       year: "2017",
-      image: "/hopeless.png"
-    }
+      image: "/hopeless.png",
+    },
   ];
 
   return (
     <div className="min-h-screen bg-black text-white">
 
-      <div className="relative h-[230px]">
+      <div
+        className="h-[180px] bg-cover bg-center"
+        style={{
+          backgroundImage: "url('/halsey banner.png')",
+        }}
+      ></div>
 
-        <img
-          src="/halsey-banner.png"
-          alt="Halsey"
-          className="absolute h-full w-full object-cover"
-        />
+      <div className="px-8">
 
-        <div className="absolute bottom-5 left-10 flex items-center gap-5">
+        <div className="flex items-center gap-5 -mt-16">
 
           <img
             src="/halsey.png"
             alt="Halsey"
-            className="h-32 w-32 rounded-full object-cover"
+            className="w-28 h-28 rounded-full object-cover border-2 border-pink-500"
           />
 
-          <div>
-            <h1 className="text-4xl font-bold">
+          <div className="pt-16">
+
+            <h1 className="text-3xl font-bold">
               Halsey
             </h1>
 
-            <p className="text-lg">
+            <p className="text-gray-400">
               @halsey
             </p>
 
-            <button className="mt-3 rounded-xl bg-[#c83fd8] px-7 py-2 font-bold">
+            <button className="mt-2 px-7 py-2 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 font-bold">
               Follow
             </button>
+
           </div>
 
         </div>
 
-      </div>
-
-      <div className="px-10 py-6">
-
-        <div className="flex gap-8 text-xl font-bold">
+        <div className="flex gap-10 mt-7 mb-6">
 
           <button
-            onClick={() => setActiveTab("Popular")}
-            className={
-              activeTab === "Popular"
-                ? "text-[#d13cff]"
+            onClick={() => setTab("popular")}
+            className={`font-bold text-lg ${
+              tab === "popular"
+                ? "text-pink-500"
                 : "text-white"
-            }
+            }`}
           >
             Popular
           </button>
 
           <button
-            onClick={() => setActiveTab("Albums")}
-            className={
-              activeTab === "Albums"
-                ? "text-[#d13cff]"
+            onClick={() => setTab("albums")}
+            className={`font-bold text-lg ${
+              tab === "albums"
+                ? "text-pink-500"
                 : "text-white"
-            }
+            }`}
           >
             Albums
           </button>
 
         </div>
 
-        {activeTab === "Popular" && (
-          <div className="mt-8 space-y-5">
+        {tab === "popular" && (
+          <div className="pb-10">
 
-            {popular.map((song) => (
+            {songs.map((song, index) => (
               <div
-                key={song.title}
-                className="flex items-center gap-5"
+                key={index}
+                className="flex items-center gap-5 mb-5"
               >
 
                 <img
                   src={song.image}
-                  alt={song.title}
-                  className="h-20 w-24 rounded-xl object-cover"
+                  alt={song.name}
+                  className="w-[72px] h-[62px] rounded-xl object-cover"
                 />
 
                 <div>
-                  <h2 className="text-lg font-bold">
-                    {song.title}
-                  </h2>
 
-                  <p className="text-gray-400">
-                    {song.number}
+                  <h3 className="font-bold">
+                    {song.name}
+                  </h3>
+
+                  <p className="text-gray-400 font-semibold text-sm">
+                    {song.plays}
                   </p>
+
                 </div>
 
               </div>
@@ -146,56 +153,33 @@ function Artist() {
           </div>
         )}
 
-        {activeTab === "Albums" && (
-          <div className="mt-8 space-y-5">
+        {tab === "albums" && (
+          <div className="pb-10">
 
             {albums.map((album) => (
-              <div key={album.title}>
+              <div
+                key={album.id}
+                onClick={() => navigate(`/album/${album.id}`)}
+                className="flex items-center gap-5 mb-5 cursor-pointer hover:bg-[#171717] p-2 rounded-xl transition"
+              >
 
-                {album.title === "Badlands" ? (
-                  <Link
-                    to="/album/badlands"
-                    className="flex items-center gap-5"
-                  >
+                <img
+                  src={album.image}
+                  alt={album.name}
+                  className="w-[72px] h-[62px] rounded-xl object-cover"
+                />
 
-                    <img
-                      src={album.image}
-                      alt={album.title}
-                      className="h-20 w-24 rounded-xl object-cover"
-                    />
+                <div>
 
-                    <div>
-                      <h2 className="text-lg font-bold">
-                        {album.title}
-                      </h2>
+                  <h3 className="font-bold">
+                    {album.name}
+                  </h3>
 
-                      <p className="text-gray-400">
-                        Album · {album.year}
-                      </p>
-                    </div>
+                  <p className="text-gray-400 font-semibold text-sm">
+                    Album · {album.year}
+                  </p>
 
-                  </Link>
-                ) : (
-                  <div className="flex items-center gap-5">
-
-                    <img
-                      src={album.image}
-                      alt={album.title}
-                      className="h-20 w-24 rounded-xl object-cover"
-                    />
-
-                    <div>
-                      <h2 className="text-lg font-bold">
-                        {album.title}
-                      </h2>
-
-                      <p className="text-gray-400">
-                        Album · {album.year}
-                      </p>
-                    </div>
-
-                  </div>
-                )}
+                </div>
 
               </div>
             ))}

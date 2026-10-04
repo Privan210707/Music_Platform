@@ -1,102 +1,133 @@
-function Album() {
-  return (
-    <div className="min-h-screen bg-black text-white px-10 py-10">
+import { useNavigate, useParams } from "react-router-dom";
 
-      <div className="flex items-center gap-8">
+function Album() {
+  const navigate = useNavigate();
+  const { albumId } = useParams();
+
+  const albums = {
+    "great-impersonator": {
+      name: "The Great Impersonator",
+      year: "2025",
+      image: "/the great.png",
+      songs: [
+        "Only Living Girl in LA",
+        "Ego",
+        "Panic Attack",
+        "Lucky",
+        "The End",
+      ],
+    },
+
+    manic: {
+      name: "Manic",
+      year: "2020",
+      image: "/manic.png",
+      songs: [
+        "You Should Be Sad",
+        "Graveyard",
+        "Without Me",
+        "Finally // Beautiful Stranger",
+        "3am",
+      ],
+    },
+
+    badlands: {
+      name: "Badlands",
+      year: "2018",
+      image: "/badland.png",
+      songs: [
+        "Castle",
+        "Hold Me Down",
+        "New Americana",
+        "Colors",
+        "Ghost",
+      ],
+    },
+
+    "hopeless-fountain-kingdom": {
+      name: "Hopeless fountain kingdom",
+      year: "2017",
+      image: "/hopeless.png",
+      songs: [
+        "The Prologue",
+        "100 Letters",
+        "Eyes Closed",
+        "Alone",
+        "Now or Never",
+      ],
+    },
+  };
+
+  const album = albums[albumId];
+
+  return (
+    <div className="min-h-screen bg-black text-white p-8">
+
+      <button
+        onClick={() => navigate(-1)}
+        className="mb-8 px-5 py-2 rounded-full bg-[#222] hover:bg-[#333]"
+      >
+        ← Back
+      </button>
+
+      <div className="flex items-end gap-7">
 
         <img
-          src="/badland.png"
-          alt="Badlands"
-          className="h-44 w-44 rounded-2xl object-cover"
+          src={album.image}
+          alt={album.name}
+          className="w-52 h-52 rounded-2xl object-cover"
         />
 
         <div>
 
-          <h1 className="text-4xl font-bold">
-            Badlands
-          </h1>
-
-          <p className="mt-2 text-lg text-gray-300">
-            Halsey · 2018
+          <p className="text-gray-400">
+            Album
           </p>
 
-          <div className="mt-8 flex gap-16">
+          <h1 className="text-4xl font-bold mt-2">
+            {album.name}
+          </h1>
 
-            <div>
-              <h2 className="text-3xl font-bold">
-                12
-              </h2>
+          <p className="text-gray-400 mt-3">
+            Halsey · {album.year}
+          </p>
 
-              <p className="text-gray-400">
-                Playlists
-              </p>
+        </div>
+
+      </div>
+
+      <div className="mt-10">
+
+        {album.songs.map((song, index) => (
+          <div
+            key={index}
+            className="flex items-center gap-5 p-4 rounded-xl hover:bg-[#171717]"
+          >
+
+            <span className="text-gray-500 w-5">
+              {index + 1}
+            </span>
+
+            <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-xl">
+              ♪
             </div>
 
             <div>
-              <h2 className="text-3xl font-bold">
-                243
-              </h2>
 
-              <p className="text-gray-400">
-                Followers
+              <h3 className="font-semibold">
+                {song}
+              </h3>
+
+              <p className="text-gray-500 text-sm">
+                Halsey
               </p>
-            </div>
 
-            <div>
-              <h2 className="text-3xl font-bold">
-                158
-              </h2>
-
-              <p className="text-gray-400">
-                Following
-              </p>
             </div>
 
           </div>
-
-        </div>
-
-      </div>
-
-      <button className="mt-8 w-full rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 py-3 font-bold">
-        Edit Profile
-      </button>
-
-      <h2 className="mt-10 text-2xl font-bold">
-        Playlists
-      </h2>
-
-      <div className="mt-8 flex gap-16">
-
-        <div>
-          <img
-            src="/my playlists.png"
-            alt="My Playlists"
-            className="h-52 w-60 rounded-2xl object-cover"
-          />
-
-          <p className="mt-3 text-center font-bold">
-            My Playlists
-          </p>
-        </div>
-
-        <div>
-          <img
-            src="/favorite.png"
-            alt="Favorite"
-            className="h-52 w-60 rounded-2xl object-cover"
-          />
-
-          <p className="mt-3 text-center font-bold">
-            Favorite
-          </p>
-        </div>
+        ))}
 
       </div>
-
-      <button className="fixed bottom-5 right-5 h-20 w-20 rounded-full bg-[#202020] text-3xl">
-        <img src="/Ai chat.png" alt="Chat" />
-      </button>
 
     </div>
   );

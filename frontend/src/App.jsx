@@ -1,23 +1,28 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
-import GlobalLayout from "./components/GlobalLayout";
-
+import Landing from "./pages/Landing";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Search from "./pages/Search";
 import Explore from "./pages/Explore";
-import Library from "./pages/Library";
-import Profile from "./pages/Profile";
 import Artist from "./pages/Artist";
 import Album from "./pages/Album";
+import Library from "./pages/Library";
+import Profile from "./pages/Profile";
 
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
 
-function App() {
+import GlobalLayout from "./components/GlobalLayout";
+
+export default function App() {
   return (
     <Routes>
 
-      <Route path="/" element={<Navigate to="/home" />} />
+      <Route path="/" element={<Landing />} />
+
+      <Route path="/signup" element={<Signup />} />
+
+      <Route path="/login" element={<Login />} />
 
       <Route element={<GlobalLayout />}>
 
@@ -27,22 +32,20 @@ function App() {
 
         <Route path="/explore" element={<Explore />} />
 
+        <Route path="/artist/halsey" element={<Artist />} />
+
+        <Route path="/album/album" element={<Album />} />
+
         <Route path="/library" element={<Library />} />
 
         <Route path="/profile" element={<Profile />} />
 
-        <Route path="/artist/halsey" element={<Artist />} />
-
-        <Route path="/album/badlands" element={<Album />} />
+      
 
       </Route>
 
-      <Route path="/login" element={<Login />} />
-
-      <Route path="/signup" element={<Signup />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
 
     </Routes>
   );
 }
-
-export default App;

@@ -1,162 +1,151 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getGenres, getArtists } from "../api";
 
 function Explore() {
+  const navigate = useNavigate();
 
-  const genres = [
-    {
-      name: "Pop",
-      image: "/pop.png",
-      bg: "bg-[#2db1bd]"
-    },
-    {
-      name: "Hip-Hop",
-      image: "/hip-hop.png",
-      bg: "bg-[#ed873c]"
-    },
-    {
-      name: "Mood",
-      image: "/mood.png",
-      bg: "bg-[#ff3942]"
-    },
-    {
-      name: "Soul",
-      image: "/soul.png",
-      bg: "bg-[#dc4098]"
-    },
-    {
-      name: "K-pop",
-      image: "/k-pop.png",
-      bg: "bg-[#ae3ce8]"
-    },
-    {
-      name: "Rain & Monsoon",
-      image: "/rain.png",
-      bg: "bg-[#2673c9]"
-    },
-    {
-      name: "Classical",
-      image: "/classical.png",
-      bg: "bg-[#f5b83f]"
-    },
-    {
-      name: "Summer",
-      image: "/summer.png",
-      bg: "bg-[#8bd954]"
+  const [genres, setGenres] = useState([
+    { name: "Pop", image: "/pop.png", color: "#2db1bd" },
+    { name: "Hip-Hop", image: "/hip-hop.png", color: "#ed873c" },
+    { name: "Mood", image: "/mood.png", color: "#e84c89" },
+    { name: "Soul", image: "/soul.png", color: "#7856c9" },
+    { name: "K-pop", image: "/k-pop.png", color: "#db4777" },
+    { name: "Rain & Monsoon", image: "/rain.png", color: "#4285b4" },
+    { name: "Classical", image: "/classical.png", color: "#b58a43" },
+    { name: "Summer", image: "/summer.png", color: "#4ba66a" },
+  ]);
+
+  const [artists, setArtists] = useState([
+    { name: "K.K", image: "/kk.png" },
+    { name: "Arijit Singh", image: "/arijit.png" },
+    { name: "Rose", image: "/rose.png" },
+    { name: "Jungkook", image: "/jungkook.png" },
+    { name: "Halsey", image: "/halsey.png" },
+    { name: "Justin Bieber", image: "/justin.png" },
+  ]);
+
+  useEffect(() => {
+    getGenres()
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setGenres(data);
+        }
+      })
+      .catch(() => {});
+
+    getArtists()
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          setArtists(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  function openArtist(artist) {
+    const name = artist.name || artist.artist_name;
+
+    if (name && name.toLowerCase() === "halsey") {
+      navigate("/artist/Halsey");
     }
-  ];
-
-
-  const artists = [
-    {
-      name: "K.K",
-      image: "/kk.png"
-    },
-    {
-      name: "Arijit Singh",
-      image: "/arijit.png"
-    },
-    {
-      name: "Rose",
-      image: "/rose.png"
-    },
-    {
-      name: "Jungkook",
-      image: "/jungkook.png"
-    },
-    {
-      name: "Halsey",
-      image: "/halsey.png"
-    },
-    {
-      name: "Justin Bieber",
-      image: "/justin.png"
-    }
-  ];
-
+  }
 
   return (
+    <div className="min-h-screen w-full bg-black text-white p-6 sm:p-10">
 
-    <div className="min-h-screen bg-black text-white">
+      <h1 className="text-3xl font-bold mb-2">
+        Explore
+      </h1>
 
-      <main className="px-5 py-6 sm:px-8 lg:px-10">
+      <p className="text-gray-400 mb-8">
+        Explore music, genres and artists
+      </p>
 
-     
-        <h1 className="mb-7 text-3xl font-bold sm:text-4xl">
-          Explore
-        </h1>
+      <h2 className="text-2xl font-bold mb-5">
+        Browse All
+      </h2>
 
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {genres.map((genre, index) => (
+          <div
+            key={genre.id || genre.name || index}
+            style={{
+              backgroundColor:
+                genre.color ||
+                [
+                  "#2db1bd",
+                  "#ed873c",
+                  "#e84c89",
+                  "#7856c9",
+                  "#db4777",
+                  "#4285b4",
+                  "#b58a43",
+                  "#4ba66a",
+                ][index % 8],
+            }}
+            className="relative h-36 rounded-xl overflow-hidden p-5"
+          >
+            <h3 className="text-xl font-bold">
+              {genre.name || genre.title}
+            </h3>
 
-          {genres.map((genre) => (
+            <img
+              src={genre.image_url || genre.image}
+              alt={genre.name || genre.title}
+              className="absolute w-28 h-28 object-cover rotate-12 -right-2 -bottom-3 rounded-lg"
+            />
+          </div>
+        ))}
 
+      </div>
+
+      <h2 className="text-2xl font-bold mt-10 mb-5">
+        Popular Artists
+      </h2>
+
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
+
+        {artists.map((artist, index) => {
+          const name = artist.name || artist.artist_name;
+          const image = artist.image_url || artist.image;
+
+          const isHalsey =
+            name && name.toLowerCase() === "halsey";
+
+          return (
             <div
-              key={genre.name}
-              className={`${genre.bg} relative h-[120px] overflow-hidden rounded-xl p-5 transition hover:scale-[1.02]`}
+              key={artist.id || name || index}
+              onClick={() => openArtist(artist)}
+              className={`text-center ${
+                isHalsey
+                  ? "cursor-pointer"
+                  : "cursor-default"
+              }`}
             >
 
-              <h2 className="text-lg font-bold">
-                {genre.name}
-              </h2>
-
               <img
-                src={genre.image}
-                alt={genre.name}
-                className="absolute bottom-[-15px] right-[-5px] h-[115px] w-[125px] rotate-[15deg] object-cover shadow-lg"
+                src={image}
+                alt={name}
+                className={`w-28 h-28 sm:w-32 sm:h-32 mx-auto rounded-full object-cover ${
+                  isHalsey
+                    ? "hover:scale-105 transition duration-300"
+                    : ""
+                }`}
               />
 
+              <p className="mt-3 font-semibold">
+                {name}
+              </p>
+
             </div>
+          );
+        })}
 
-          ))}
-
-        </div>
-
-
-        <section className="mt-9 pb-10">
-
-          <h2 className="mb-7 text-2xl font-bold sm:text-3xl">
-            Your Favorite Artists
-          </h2>
-
-
-          <div className="grid grid-cols-2 gap-y-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-
-            {artists.map((artist) => (
-
-              <div
-                key={artist.name}
-                className="flex flex-col items-center"
-              >
-
-             
-                <Link to={`/artist/${artist.name.toLowerCase().replace(" ", "-")}`}>
-
-                  <img
-                    src={artist.image}
-                    alt={artist.name}
-                    className="h-32 w-32 rounded-full object-cover transition duration-300 hover:scale-105 sm:h-36 sm:w-36 lg:h-40 lg:w-40"
-                  />
-
-                </Link>
-
-
-                
-                <p className="mt-3 text-center text-sm font-bold sm:text-base">
-                  {artist.name}
-                </p>
-
-              </div>
-
-            ))}
-
-          </div>
-
-        </section>
-
-      </main>
+      </div>
 
     </div>
-
   );
 }
 

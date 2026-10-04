@@ -1,170 +1,110 @@
+import {
+  Shuffle,
+  SkipBack,
+  Play,
+  SkipForward,
+  Repeat,
+} from "lucide-react";
+
 function MusicPlayer() {
+  const recentlyPlayed = [
+    {
+      title: "Good Days",
+      artist: "One 4",
+      image: "/gooddays.png",
+    },
+    {
+      title: "Midnights",
+      artist: "Taylor Swift",
+      image: "/midnight.png",
+    },
+    {
+      title: "Flowers",
+      artist: "Olivia",
+      image: "/flowers.png",
+    },
+    {
+      title: "As It Was",
+      artist: "Harry Styles",
+      image: "/As it.png",
+    },
+  ];
+
   return (
+    <aside className="fixed right-0 top-0 z-40 hidden h-screen w-[245px] border-l border-[#303030] bg-[#151515] px-4 py-4 lg:block">
 
-    <aside className="hidden lg:block fixed right-0 top-0 w-[240px] h-screen bg-[#10151e] p-5 overflow-y-auto">
-
-      <h2 className="text-lg font-bold mb-5">
-        Now Playing
-      </h2>
-
-      <img
-        src="/music player.png"
-        alt="Moon"
-        className="w-full h-[190px] object-cover rounded-xl"
-      />
-
-      <div className="mt-4">
-
-        <h3 className="text-lg font-bold">
-          Midnight
-        </h3>
-
-        <p className="text-sm text-gray-400">
-          Vibe Music
-        </p>
-
+  
+      <div className="rounded-2xl bg-[#202020] p-2">
+        <img
+          src="/daily1.png"
+          alt="Now Playing"
+          className="h-[210px] w-full rounded-xl object-cover"
+        />
       </div>
 
+      <div className="mt-3">
+        <div className="relative h-[3px] w-full rounded-full bg-[#555]">
+          <div className="absolute left-0 top-0 h-[3px] w-[55%] rounded-full bg-gradient-to-r from-purple-500 to-pink-500" />
+
+          <div className="absolute left-[55%] top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-pink-400" />
+        </div>
+      </div>
+
+     
+      <div className="mt-3 flex items-center justify-between px-1 text-gray-300">
+        <button className="transition hover:text-white">
+          <Shuffle size={17} />
+        </button>
+
+        <button className="transition hover:text-white">
+          <SkipBack size={18} fill="currentColor" />
+        </button>
+
+        <button className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-black transition hover:scale-105">
+          <Play size={15} fill="currentColor" />
+        </button>
+
+        <button className="transition hover:text-white">
+          <SkipForward size={18} fill="currentColor" />
+        </button>
+
+        <button className="transition hover:text-white">
+          <Repeat size={17} />
+        </button>
+      </div>
+
+     
       <div className="mt-6">
-
-        <div className="h-1 bg-gray-700 rounded-full">
-
-          <div className="h-1 w-[35%] bg-purple-500 rounded-full"></div>
-
-        </div>
-
-        <div className="flex justify-between text-xs text-gray-500 mt-2">
-
-          <span>1:24</span>
-
-          <span>3:45</span>
-
-        </div>
-
-      </div>
-
-      <div className="flex justify-center items-center gap-5 mt-6">
-
-        <button>
-          ↶
-        </button>
-
-        <button>
-          ◀
-        </button>
-
-        <button className="w-10 h-10 bg-white text-black rounded-full">
-          ▶
-        </button>
-
-        <button>
-          ▶
-        </button>
-
-        <button>
-          ↷
-        </button>
-
-      </div>
-
-      <div className="mt-8">
-
-        <h3 className="font-bold mb-4">
+        <h2 className="mb-4 text-sm font-bold text-white">
           Recently Played
-        </h3>
+        </h2>
 
         <div className="space-y-4">
+          {recentlyPlayed.map((song) => (
+            <div
+              key={song.title}
+              className="flex cursor-pointer items-center gap-3 rounded-lg p-1 transition hover:bg-[#252525]"
+            >
+              <img
+                src={song.image}
+                alt={song.title}
+                className="h-11 w-11 rounded-lg object-cover"
+              />
 
-          <div className="flex items-center gap-3">
+              <div className="min-w-0">
+                <h3 className="truncate text-xs font-bold text-white">
+                  {song.title}
+                </h3>
 
-            <img
-              src="/gooddays.png"
-              className="w-10 h-10 rounded"
-            />
-
-            <div>
-
-              <p className="text-sm font-bold">
-                Good Days
-              </p>
-
-              <p className="text-xs text-gray-500">
-                One 4
-              </p>
-
+                <p className="mt-1 truncate text-[11px] text-gray-400">
+                  {song.artist}
+                </p>
+              </div>
             </div>
-
-          </div>
-
-          <div className="flex items-center gap-3">
-
-            <img
-              src="/midnight.png"
-              className="w-10 h-10 rounded"
-            />
-
-            <div>
-
-              <p className="text-sm font-bold">
-                Midnights
-              </p>
-
-              <p className="text-xs text-gray-500">
-                Taylor Swift
-              </p>
-
-            </div>
-
-          </div>
-
-          <div className="flex items-center gap-3">
-
-            <img
-              src="/flowers.png"
-              className="w-10 h-10 rounded"
-            />
-
-            <div>
-
-              <p className="text-sm font-bold">
-                Flowers
-              </p>
-
-              <p className="text-xs text-gray-500">
-                Olivia
-              </p>
-
-            </div>
-
-          </div>
-
-          <div className="flex items-center gap-3">
-
-            <img
-              src="/As it.png"
-              className="w-10 h-10 rounded"
-            />
-
-            <div>
-
-              <p className="text-sm font-bold">
-                As It Was
-              </p>
-
-              <p className="text-xs text-gray-500">
-                Harry Styles
-              </p>
-
-            </div>
-
-          </div>
-
+          ))}
         </div>
-
       </div>
-
     </aside>
-
   );
 }
 

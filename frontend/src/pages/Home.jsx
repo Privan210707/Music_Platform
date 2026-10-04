@@ -1,110 +1,143 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import MusicPlayer from "../components/MusicPlayer";
+import { getHome } from "../api";
 
 function Home() {
-
   const [search, setSearch] = useState("");
+  const [user, setUser] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   const music = [
     {
       title: "Daily Mix 1",
       subtitle: "Vibe Music",
-      image: "/daily1.png"
+      image: "/daily1.png",
     },
     {
       title: "Chill Vibes",
       subtitle: "Chill Music",
-      image: "/chillvibes.png"
+      image: "/chillvibes.png",
     },
     {
       title: "Daily Mix 2",
       subtitle: "Daily Mix",
-      image: "/daily2.png"
+      image: "/daily2.png",
     },
     {
       title: "Mood Boosters",
       subtitle: "Happy Music",
-      image: "/moodbooster.png"
-    }
+      image: "/moodbooster.png",
+    },
   ];
 
   const trending = [
     {
       title: "Expresso",
-      image: "/expresso.png"
+      image: "/expresso.png",
     },
     {
       title: "Clouds",
-      image: "/clouds.png"
+      image: "/clouds.png",
     },
     {
       title: "Lover",
-      image: "/lover.png"
+      image: "/lover.png",
     },
     {
       title: "Spring Days",
-      image: "/spring days.png"
-    }
+      image: "/spring days.png",
+    },
   ];
 
-  return (
+  useEffect(() => {
+    getHome()
+      .then((data) => {
+        setUser(data.email || "");
+      })
+      .catch((error) => {
+        console.error(error.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
+  function handleSearch(e) {
+    e.preventDefault();
+
+    if (search.trim()) {
+      navigate(`/search?q=${encodeURIComponent(search.trim())}`);
+    } else {
+      navigate("/search");
+    }
+  }
+
+  return (
     <div className="min-h-screen bg-black text-white">
 
-      <main className="ml-0 lg:mr-[240px] px-5 sm:px-6 md:px-8 lg:px-10 py-6">
+      <main className="min-h-screen px-5 py-6 sm:px-6 md:px-8 lg:mr-[280px] lg:px-10">
 
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
 
           <div>
-
-            <h2 className="text-xl sm:text-2xl font-bold">
-              Good morning, Mayuri
+            <h2 className="text-xl font-bold sm:text-2xl">
+              {loading
+                ? "Welcome to Vibe"
+                : `Good morning, ${user || "Mayuri"}`}
             </h2>
 
-            <p className="mt-1 text-gray-400 font-semibold">
+            <p className="mt-1 font-semibold text-gray-400">
               Let the music brighten your day
             </p>
-
           </div>
 
-          <div className="w-full lg:w-[390px]">
+          <form
+            onSubmit={handleSearch}
+            className="w-full lg:w-[390px]"
+          >
+            <div className="flex items-center gap-3 rounded-full border border-[#444] bg-[#202020] px-5 py-3">
 
-            <div className="flex items-center gap-3 bg-[#202020] border border-[#444] rounded-full px-5 py-3">
-
-              <span className="text-gray-300">
+              <span className="text-xl text-gray-300">
                 ⌕
               </span>
 
               <input
-                type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search songs, artists, albums"
-                className="w-full bg-transparent outline-none text-white placeholder-gray-400"
+                className="w-full bg-transparent text-white outline-none placeholder:text-gray-400"
               />
 
-            </div>
+              <button
+                type="submit"
+                className="text-sm text-purple-400"
+              >
+                Search
+              </button>
 
-          </div>
+            </div>
+          </form>
 
         </div>
 
-
         <section className="mt-7">
 
-          <div className="relative h-[170px] sm:h-[185px] md:h-[200px] overflow-hidden rounded-2xl">
+          <div className="relative h-[170px] overflow-hidden rounded-2xl sm:h-[185px] md:h-[200px]">
 
             <img
               src="/banner.png"
               alt="Chill Vibes"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover"
             />
 
-            <div className="absolute inset-0 bg-black/30"></div>
+            <div className="absolute inset-0 bg-black/30" />
 
             <div className="relative z-10 p-6 sm:p-7">
 
-              <h1 className="text-xl sm:text-2xl font-bold">
+              <h1 className="text-xl font-bold sm:text-2xl">
                 Chill Vibes
               </h1>
 
@@ -112,7 +145,10 @@ function Home() {
                 Chill . Happy . Dark
               </p>
 
-              <button className="mt-4 w-10 h-10 rounded-full bg-white text-black">
+              <button
+                onClick={() => navigate("/explore")}
+                className="mt-4 h-10 w-10 rounded-full bg-white text-black transition hover:scale-105"
+              >
                 ▶
               </button>
 
@@ -122,43 +158,43 @@ function Home() {
 
         </section>
 
-
         <section className="mt-7">
 
-          <h2 className="text-lg sm:text-xl font-bold mb-5">
+          <h2 className="mb-5 text-lg font-bold sm:text-xl">
             Music For You
           </h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
 
-            {music.map((item, index) => (
+            {music.map((item) => (
 
               <div
-                key={index}
-                className="group cursor-pointer"
+                key={item.title}
+                className="group min-w-0 cursor-pointer"
               >
 
-                <div className="relative w-[135px] sm:w-[145px] md:w-[150px]">
+                <div className="relative w-full max-w-[150px]">
 
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-[135px] h-[135px] sm:w-[145px] sm:h-[145px] md:w-[150px] md:h-[150px] object-cover rounded-xl"
+                    className="aspect-square w-full rounded-xl object-cover"
                   />
 
-                  <button className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-white text-black opacity-0 group-hover:opacity-100 transition">
-
+                  <button
+                    onClick={() => navigate("/explore")}
+                    className="absolute bottom-2 right-2 h-8 w-8 rounded-full bg-white text-black opacity-0 transition group-hover:opacity-100"
+                  >
                     ▶
-
                   </button>
 
                 </div>
 
-                <h3 className="mt-2 font-bold text-sm">
+                <h3 className="mt-2 text-sm font-bold">
                   {item.title}
                 </h3>
 
-                <p className="text-gray-400 text-sm">
+                <p className="text-sm text-gray-400">
                   {item.subtitle}
                 </p>
 
@@ -170,39 +206,39 @@ function Home() {
 
         </section>
 
+        <section className="mt-8 pb-8">
 
-        <section className="mt-8">
-
-          <h2 className="text-lg sm:text-xl font-bold mb-5">
+          <h2 className="mb-5 text-lg font-bold sm:text-xl">
             Trending Now
           </h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
 
-            {trending.map((item, index) => (
+            {trending.map((item) => (
 
               <div
-                key={index}
-                className="group cursor-pointer"
+                key={item.title}
+                className="group min-w-0 cursor-pointer"
               >
 
-                <div className="relative w-[135px] sm:w-[145px] md:w-[150px]">
+                <div className="relative w-full max-w-[150px]">
 
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="w-[135px] h-[135px] sm:w-[145px] sm:h-[145px] md:w-[150px] md:h-[150px] object-cover rounded-xl"
+                    className="aspect-square w-full rounded-xl object-cover"
                   />
 
-                  <button className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-white text-black opacity-0 group-hover:opacity-100 transition">
-
+                  <button
+                    onClick={() => navigate("/explore")}
+                    className="absolute bottom-2 right-2 h-8 w-8 rounded-full bg-white text-black opacity-0 transition group-hover:opacity-100"
+                  >
                     ▶
-
                   </button>
 
                 </div>
 
-                <h3 className="mt-2 font-bold text-sm">
+                <h3 className="mt-2 text-sm font-bold">
                   {item.title}
                 </h3>
 
@@ -216,7 +252,9 @@ function Home() {
 
       </main>
 
-      <MusicPlayer />
+      <div className="hidden lg:block">
+        <MusicPlayer />
+      </div>
 
     </div>
   );

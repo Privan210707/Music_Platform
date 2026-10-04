@@ -1,178 +1,107 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-function Signup() {
+export default function Signup() {
   const navigate = useNavigate();
-
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
 
-  async function handleSignup(e) {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    setMessage("");
+    if (!email.trim()) return;
 
-    try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/api/accounts/register/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            email: email,
-            password: password
-          })
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage("Account created successfully");
-
-        setTimeout(() => {
-          navigate("/login");
-        }, 1000);
-      } else {
-        setMessage(
-          data.detail ||
-          data.message ||
-          "Signup failed"
-        );
-      }
-    } catch (error) {
-      setMessage("Cannot connect to backend");
-    }
-  }
+    navigate("/login");
+  };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-5 text-white">
+    <div className="min-h-screen w-full bg-black flex items-center justify-center px-4">
 
-      <div className="absolute inset-0 flex items-center justify-center opacity-30">
+      <div className="w-full max-w-[404px] min-h-[654px] bg-[#202020] border border-[#454545] rounded-[55px] px-[30px] py-7">
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-start justify-center gap-7 mb-14">
 
-          <span className="h-20 w-2 rounded bg-purple-500"></span>
-          <span className="h-32 w-2 rounded bg-pink-500"></span>
-          <span className="h-48 w-2 rounded bg-purple-500"></span>
-          <span className="h-28 w-2 rounded bg-pink-500"></span>
-          <span className="h-56 w-2 rounded bg-purple-500"></span>
-          <span className="h-36 w-2 rounded bg-pink-500"></span>
-          <span className="h-24 w-2 rounded bg-purple-500"></span>
-          <span className="h-44 w-2 rounded bg-pink-500"></span>
-          <span className="h-28 w-2 rounded bg-purple-500"></span>
-          <span className="h-52 w-2 rounded bg-pink-500"></span>
-          <span className="h-32 w-2 rounded bg-purple-500"></span>
+          <div className="w-[65px] h-[55px] flex items-center justify-center gap-[7px] pt-2">
 
-        </div>
+            <span className="w-[5px] h-[15px] rounded-full bg-purple-500"></span>
 
-      </div>
+            <span className="w-[5px] h-[29px] rounded-full bg-purple-500"></span>
 
+            <span className="w-[5px] h-[38px] rounded-full bg-gradient-to-b from-purple-500 to-red-500"></span>
 
-      <div className="relative z-10 w-full max-w-md rounded-2xl bg-[#181818] p-8 shadow-2xl">
+            <span className="w-[5px] h-[29px] rounded-full bg-purple-500"></span>
 
-        <div className="mb-5 flex justify-center">
-
-          <div className="flex items-center gap-1">
-
-            <span className="h-3 w-1 rounded bg-purple-500"></span>
-            <span className="h-5 w-1 rounded bg-purple-500"></span>
-            <span className="h-8 w-1 rounded bg-pink-500"></span>
-            <span className="h-5 w-1 rounded bg-purple-500"></span>
-            <span className="h-3 w-1 rounded bg-pink-500"></span>
+            <span className="w-[5px] h-[16px] rounded-full bg-purple-500"></span>
 
           </div>
 
+          <h1 className="text-white text-[29px] leading-[1.28] font-extrabold italic text-center">
+            Sign up to
+            <br />
+            start listening
+          </h1>
+
         </div>
 
+        <form onSubmit={handleSubmit}>
 
-        <h1 className="text-center text-2xl font-bold">
-          Sign up to start listening
-        </h1>
-
-
-        <form
-          onSubmit={handleSignup}
-          className="mt-8"
-        >
-
-          <label className="text-sm font-bold">
+          <label className="block text-white text-[17px] font-extrabold italic mb-7">
             Email address
           </label>
 
           <input
             type="email"
+            placeholder="name@gmail.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email address"
             required
-            className="mt-2 w-full rounded-lg border border-gray-600 bg-[#242424] px-4 py-3 text-white outline-none focus:border-purple-500"
+            className="w-full h-11 rounded-full bg-[#303030] border border-[#414141] outline-none px-4 text-white text-sm placeholder:text-gray-300 focus:border-purple-500 mb-7"
           />
-
-
-          <label className="mt-5 block text-sm font-bold">
-            Password
-          </label>
-
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-            required
-            className="mt-2 w-full rounded-lg border border-gray-600 bg-[#242424] px-4 py-3 text-white outline-none focus:border-purple-500"
-          />
-
 
           <button
             type="submit"
-            className="mt-6 w-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 py-3 font-bold hover:opacity-90"
+            className="w-full h-11 rounded-full text-white text-sm font-extrabold italic bg-gradient-to-r from-[#b83cff] to-[#d946a4] hover:scale-[1.02] transition"
           >
-            Sign Up
+            Sign up
           </button>
 
         </form>
 
-
-        {message && (
-          <p className="mt-4 text-center text-sm text-purple-300">
-            {message}
-          </p>
-        )}
-
-
-        <div className="my-6 flex items-center gap-3">
-          <div className="h-px flex-1 bg-gray-700"></div>
-          <span className="text-sm text-gray-400">or</span>
-          <div className="h-px flex-1 bg-gray-700"></div>
+        <div className="text-white text-center text-[25px] font-bold my-11">
+          or
         </div>
 
+        <button
+          type="button"
+          className="w-full h-11 rounded-full border border-[#474747] bg-[#2c2c2c] text-white text-[13px] font-bold italic flex items-center justify-center relative hover:bg-[#353535] transition mb-7"
+        >
+          <span className="absolute left-[72px] text-[#4285F4] text-[19px] font-black not-italic">
+            G
+          </span>
 
-        <button className="mb-3 flex w-full items-center justify-center gap-3 rounded-full bg-[#242424] py-3 font-bold hover:bg-[#303030]">
-          <span className="text-lg">G</span>
           Continue with Google
         </button>
 
+        <button
+          type="button"
+          className="w-full h-11 rounded-full border border-[#474747] bg-[#2c2c2c] text-white text-[13px] font-bold italic flex items-center justify-center relative hover:bg-[#353535] transition"
+        >
+          <span className="absolute left-[74px] text-white text-[17px] not-italic">
+            ●
+          </span>
 
-        <button className="flex w-full items-center justify-center gap-3 rounded-full bg-[#242424] py-3 font-bold hover:bg-[#303030]">
-          <span className="text-lg">●</span>
           Continue with Apple
         </button>
 
+        <p className="text-white text-center text-sm font-bold italic mt-12">
+          Already have an account?
 
-        <p className="mt-7 text-center text-sm text-gray-400">
-          Already have an account?{" "}
-
-          <Link
-            to="/login"
-            className="font-bold text-white underline hover:text-purple-400"
+          <button
+            type="button"
+            onClick={() => navigate("/login")}
+            className="text-[#d442ff] font-extrabold italic ml-1"
           >
             Log In
-          </Link>
-
+          </button>
         </p>
 
       </div>
@@ -180,5 +109,3 @@ function Signup() {
     </div>
   );
 }
-
-export default Signup;

@@ -1,174 +1,208 @@
-import { useState } from "react";
-import MusicPlayer from "../components/MusicPlayer";
+import { useEffect, useState } from "react";
+import { Search as SearchIcon, X } from "lucide-react";
 
-function Search() {
+import {
+  searchSongs,
+  getRecentSearches,
+  saveRecentSearch,
+  deleteRecentSearch,
+} from "../api";
 
-  const [search, setSearch] = useState("");
+export default function Search() {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [recentSearches, setRecentSearches] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const [recentSearches, setRecentSearches] = useState([
-    {
-      name: "Shawn Mendes",
-      song: "Illuminate",
-      image: "/gooddays.png"
-    },
-    {
-      name: "Taylor Swift",
-      song: "Lover",
-      image: "/lover.png"
-    },
-    {
-      name: "Arijit Singh",
-      song: "Main na Raha Mera",
-      image: "/moodbooster.png"
-    },
-    {
-      name: "Rahul Nair",
-      song: "Sar Aankhon pe mere",
-      image: "/midnight.png"
-    },
-    {
-      name: "Young C.O.A.T",
-      song: "Young C.O.A.T",
-      image: "/gooddays.png"
+  useEffect(() => {
+    loadRecentSearches();
+  }, []);
+
+  async function loadRecentSearches() {
+    try {
+      const data = await getRecentSearches();
+
+      setRecentSearches(
+        Array.isArray(data)
+          ? data
+          : data.results || data.recent_searches || []
+      );
+    } catch (error) {
+      setError(error.message);
     }
-  ]);
+  }
 
-  function removeSearch(index) {
+  async function handleSearch() {
+    if (!query.trim()) return;
 
-    const newList = recentSearches.filter(
-      (_, i) => i !== index
-    );
+    try {
+      setLoading(true);
+      setError("");
 
-    setRecentSearches(newList);
+      const data = await searchSongs(query);
+
+      const songs = Array.isArray(data)
+        ? data
+        : data.results || data.songs || [];
+
+      setResults(songs);
+
+      await saveRecentSearch(query);
+
+      loadRecentSearches();
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleDelete(id) {
+    try {
+      await deleteRecentSearch(id);
+
+      setRecentSearches(
+        recentSearches.filter((item) => item.id !== id)
+      );
+    } catch (error) {
+      setError(error.message);
+    }
   }
 
   return (
+    <div className="min-h-screen bg-black p-8 text-white">
 
-    <div className="min-h-screen bg-black text-white">
+      <h1 className="mb-5 text-2xl font-bold">
+        Search
+      </h1>
 
-      <main className=" mr-[240px] min-h-screen px-6 sm:px-8 py-8">
+      <div className="relative max-w-[500px]">
 
-        <div className="flex justify-end items-center gap-5 mb-6">
+        <SearchIcon
+          size={18}
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+        />
 
-          <span className="text-xl">
-            ♧
-          </span>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }}
+          placeholder="Search songs, artists, albums"
+          className="h-12 w-full rounded-full border border-[#444] bg-[#222] pl-11 pr-24 text-white outline-none"
+        />
 
-          <div className="w-5 h-5 rounded-full bg-[#ffbd42] border-2 border-[#ff4f9a]"></div>
+        <button
+          onClick={handleSearch}
+          className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-purple-500 px-5 py-2 text-sm font-bold"
+        >
+          {loading ? "..." : "Search"}
+        </button>
 
-        </div>
+      </div>
 
-        <h1 className="text-2xl sm:text-3xl font-bold mb-4">
-          Search
-        </h1>
+      {error && (
+        <p className="mt-5 text-red-400">
+          {error}
+        </p>
+      )}
 
-        <div className="flex items-center gap-3 bg-[#202020] border border-[#555] rounded-full px-5 h-12">
+      {results.length > 0 && (
+        <div className="mt-8 max-w-[600px]">
 
-          <span className="text-lg text-gray-300">
-            ⌕
-          </span>
-
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search songs, artists, albums"
-            className="w-full bg-transparent outline-none text-white placeholder-gray-400 font-semibold text-sm"
-          />
-
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-7">
-
-          <button className="h-9 rounded-full bg-[#292929] border border-[#555] text-[#d13cff] font-bold">
-            Top result
-          </button>
-
-          <button className="h-9 rounded-full bg-[#292929] border border-[#555] font-bold">
-            Songs
-          </button>
-
-          <button className="h-9 rounded-full bg-[#292929] border border-[#555] font-bold">
-            Artists
-          </button>
-
-          <button className="h-9 rounded-full bg-[#292929] border border-[#555] font-bold">
-            Albums
-          </button>
-
-        </div>
-
-        <section className="mt-7">
-
-          <h2 className="text-lg sm:text-xl font-bold mb-4">
-            Recent Searches
+          <h2 className="mb-4 font-bold">
+            Search Results
           </h2>
 
-          <div className="space-y-4">
+          {results.map((song, index) => (
+            <div
+              key={song.id || index}
+              className="mb-2 flex items-center gap-4 rounded-xl p-3 hover:bg-[#181818]"
+            >
 
-            {recentSearches.map((item, index) => (
+              <img
+                src={song.image_url || "/music.png"}
+                alt={song.title}
+                className="h-14 w-14 rounded-lg object-cover"
+              />
 
-              <div
-                key={index}
-                className="flex items-center justify-between gap-4"
-              >
+              <div>
+                <p className="font-bold">
+                  {song.title || "Unknown Song"}
+                </p>
 
-                <div className="flex items-center gap-4 min-w-0">
-
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-xl"
-                  />
-
-                  <div className="min-w-0">
-
-                    <h3 className="font-bold text-base sm:text-lg truncate">
-                      {item.name}
-                    </h3>
-
-                    <p className="text-gray-400 text-sm sm:text-base font-semibold truncate">
-                      {item.song}
-                    </p>
-
-                  </div>
-
-                </div>
-
-                <button
-                  onClick={() => removeSearch(index)}
-                  className="text-gray-300 hover:text-white text-2xl px-2"
-                >
-                  ×
-                </button>
-
+                <p className="text-sm text-gray-400">
+                  {song.artist || "Unknown Artist"}
+                </p>
               </div>
 
-            ))}
+            </div>
+          ))}
 
-          </div>
+        </div>
+      )}
 
-        </section>
+      <div className="mt-10 max-w-[500px]">
 
-        {search && (
+        <h2 className="mb-5 font-bold">
+          Recent Searches
+        </h2>
 
-          <div className="mt-8">
-
-            <h2 className="text-xl font-bold">
-              Results for "{search}"
-            </h2>
-
-          </div>
-
+        {recentSearches.length === 0 && (
+          <p className="text-gray-500">
+            No recent searches
+          </p>
         )}
 
-      </main>
+        {recentSearches.map((item, index) => (
 
-      <MusicPlayer />
+          <div
+            key={item.id || index}
+            className="mb-3 flex items-center justify-between"
+          >
+
+            <button
+              onClick={() => setQuery(item.query)}
+              className="flex items-center gap-4"
+            >
+
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#222]">
+                <SearchIcon
+                  size={18}
+                  className="text-gray-400"
+                />
+              </div>
+
+              <div className="text-left">
+                <p className="font-bold">
+                  {item.query}
+                </p>
+
+                <p className="text-xs text-gray-500">
+                  Recent search
+                </p>
+              </div>
+
+            </button>
+
+            <button
+              onClick={() => handleDelete(item.id)}
+              className="text-gray-500 hover:text-white"
+            >
+              <X size={18} />
+            </button>
+
+          </div>
+
+        ))}
+
+      </div>
 
     </div>
-
   );
 }
-
-export default Search;
