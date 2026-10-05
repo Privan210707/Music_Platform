@@ -1,184 +1,168 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { signupUser } from "../api";
 
-function Signup() {
+export default function Signup() {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  async function handleSignup(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+    setError("");
 
-    setMessage("");
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must contain at least 6 characters.");
+      return;
+    }
+
+    setLoading(true);
 
     try {
-      const response = await fetch(
-        "http://127.0.0.1:8000/api/accounts/register/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            email: email,
-            password: password
-          })
-        }
-      );
+      const username = email.trim().split("@")[0];
 
-      const data = await response.json();
+      await signupUser({
+        email: email.trim(),
+        username,
+        password,
+      });
 
-      if (response.ok) {
-        setMessage("Account created successfully");
-
-        setTimeout(() => {
-          navigate("/login");
-        }, 1000);
-      } else {
-        setMessage(
-          data.detail ||
-          data.message ||
-          "Signup failed"
-        );
-      }
-    } catch (error) {
-      setMessage("Cannot connect to backend");
+      navigate("/login", {
+        replace: true,
+        state: {
+          message: "Account created successfully! Please log in.",
+          email: email.trim(),
+        },
+      });
+    } catch (err) {
+      setError(err.message || "Signup failed. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-5 text-white">
-
-      <div className="absolute inset-0 flex items-center justify-center opacity-30">
-
-        <div className="flex items-center gap-2">
-
-          <span className="h-20 w-2 rounded bg-purple-500"></span>
-          <span className="h-32 w-2 rounded bg-pink-500"></span>
-          <span className="h-48 w-2 rounded bg-purple-500"></span>
-          <span className="h-28 w-2 rounded bg-pink-500"></span>
-          <span className="h-56 w-2 rounded bg-purple-500"></span>
-          <span className="h-36 w-2 rounded bg-pink-500"></span>
-          <span className="h-24 w-2 rounded bg-purple-500"></span>
-          <span className="h-44 w-2 rounded bg-pink-500"></span>
-          <span className="h-28 w-2 rounded bg-purple-500"></span>
-          <span className="h-52 w-2 rounded bg-pink-500"></span>
-          <span className="h-32 w-2 rounded bg-purple-500"></span>
-
-        </div>
-
-      </div>
-
-
-      <div className="relative z-10 w-full max-w-md rounded-2xl bg-[#181818] p-8 shadow-2xl">
-
-        <div className="mb-5 flex justify-center">
-
-          <div className="flex items-center gap-1">
-
-            <span className="h-3 w-1 rounded bg-purple-500"></span>
-            <span className="h-5 w-1 rounded bg-purple-500"></span>
-            <span className="h-8 w-1 rounded bg-pink-500"></span>
-            <span className="h-5 w-1 rounded bg-purple-500"></span>
-            <span className="h-3 w-1 rounded bg-pink-500"></span>
-
+    <div className="min-h-screen w-full bg-black flex items-center justify-center px-4 py-8">
+      <div className="w-full max-w-[404px] bg-[#202020] border border-[#454545] rounded-[40px] sm:rounded-[55px] px-[30px] py-7">
+        <div className="flex items-start justify-center gap-5 mb-8">
+          <div className="w-[55px] h-[55px] flex items-center justify-center gap-[7px] pt-2">
+            <span className="w-[5px] h-[15px] rounded-full bg-purple-500"></span>
+            <span className="w-[5px] h-[29px] rounded-full bg-purple-500"></span>
+            <span className="w-[5px] h-[38px] rounded-full bg-gradient-to-b from-purple-500 to-red-500"></span>
+            <span className="w-[5px] h-[29px] rounded-full bg-purple-500"></span>
+            <span className="w-[5px] h-[16px] rounded-full bg-purple-500"></span>
           </div>
 
+          <h1 className="text-white text-[27px] leading-[1.28] font-extrabold italic text-center">
+            Sign up to
+            <br />
+            start listening
+          </h1>
         </div>
 
-
-        <h1 className="text-center text-2xl font-bold">
-          Sign up to start listening
-        </h1>
-
-
-        <form
-          onSubmit={handleSignup}
-          className="mt-8"
-        >
-
-          <label className="text-sm font-bold">
+        <form onSubmit={handleSubmit}>
+          <label className="block text-white text-[15px] font-extrabold italic mb-2">
             Email address
           </label>
 
           <input
             type="email"
+            placeholder="name@gmail.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email address"
             required
-            className="mt-2 w-full rounded-lg border border-gray-600 bg-[#242424] px-4 py-3 text-white outline-none focus:border-purple-500"
+            autoComplete="email"
+            className="w-full h-11 rounded-full bg-[#303030] border border-[#414141] outline-none px-4 text-white text-sm placeholder:text-gray-300 focus:border-purple-500 mb-5"
           />
 
-
-          <label className="mt-5 block text-sm font-bold">
+          <label className="block text-white text-[15px] font-extrabold italic mb-2">
             Password
           </label>
 
           <input
             type="password"
+            placeholder="Create a password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
             required
-            className="mt-2 w-full rounded-lg border border-gray-600 bg-[#242424] px-4 py-3 text-white outline-none focus:border-purple-500"
+            minLength={6}
+            autoComplete="new-password"
+            className="w-full h-11 rounded-full bg-[#303030] border border-[#414141] outline-none px-4 text-white text-sm placeholder:text-gray-300 focus:border-purple-500 mb-5"
           />
 
+          <label className="block text-white text-[15px] font-extrabold italic mb-2">
+            Confirm password
+          </label>
+
+          <input
+            type="password"
+            placeholder="Enter the same password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            autoComplete="new-password"
+            className="w-full h-11 rounded-full bg-[#303030] border border-[#414141] outline-none px-4 text-white text-sm placeholder:text-gray-300 focus:border-purple-500 mb-4"
+          />
+
+          {error && (
+            <p className="text-red-400 text-sm mb-4 text-center break-words">
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
-            className="mt-6 w-full rounded-full bg-gradient-to-r from-purple-600 to-pink-500 py-3 font-bold hover:opacity-90"
+            disabled={loading}
+            className="w-full h-11 rounded-full text-white text-sm font-extrabold italic bg-gradient-to-r from-[#b83cff] to-[#d946a4] hover:scale-[1.02] transition disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            Sign Up
+            {loading ? "Creating account..." : "Sign up"}
           </button>
-
         </form>
 
-
-        {message && (
-          <p className="mt-4 text-center text-sm text-purple-300">
-            {message}
-          </p>
-        )}
-
-
-        <div className="my-6 flex items-center gap-3">
-          <div className="h-px flex-1 bg-gray-700"></div>
-          <span className="text-sm text-gray-400">or</span>
-          <div className="h-px flex-1 bg-gray-700"></div>
+        <div className="text-white text-center text-[23px] font-bold my-6">
+          or
         </div>
 
-
-        <button className="mb-3 flex w-full items-center justify-center gap-3 rounded-full bg-[#242424] py-3 font-bold hover:bg-[#303030]">
-          <span className="text-lg">G</span>
+        <button
+          type="button"
+          className="w-full h-11 rounded-full border border-[#474747] bg-[#2c2c2c] text-white text-[13px] font-bold italic flex items-center justify-center relative hover:bg-[#353535] transition mb-4"
+        >
+          <span className="absolute left-[72px] text-[#4285F4] text-[19px] font-black not-italic">
+            G
+          </span>
           Continue with Google
         </button>
 
-
-        <button className="flex w-full items-center justify-center gap-3 rounded-full bg-[#242424] py-3 font-bold hover:bg-[#303030]">
-          <span className="text-lg">●</span>
+        <button
+          type="button"
+          className="w-full h-11 rounded-full border border-[#474747] bg-[#2c2c2c] text-white text-[13px] font-bold italic flex items-center justify-center relative hover:bg-[#353535] transition"
+        >
+          <span className="absolute left-[74px] text-white text-[17px] not-italic">
+            ●
+          </span>
           Continue with Apple
         </button>
 
-
-        <p className="mt-7 text-center text-sm text-gray-400">
-          Already have an account?{" "}
-
-          <Link
-            to="/login"
-            className="font-bold text-white underline hover:text-purple-400"
+        <p className="text-white text-center text-sm font-bold italic mt-8">
+          Already have an account?
+          <button
+            type="button"
+            onClick={() => navigate("/login")}
+            className="text-[#d442ff] font-extrabold italic ml-1"
           >
             Log In
-          </Link>
-
+          </button>
         </p>
-
       </div>
-
     </div>
   );
 }
-
-export default Signup;

@@ -34,3 +34,6 @@ class ArtistPlaylistSerializer(serializers.ModelSerializer):
             "name",
             "image_url"
         ]
+
+
+
