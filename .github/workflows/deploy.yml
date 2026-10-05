@@ -26,51 +26,34 @@ jobs:
 
           ssh \
             -i ~/.ssh/ec2_key \
+            -p 22 \
             -o StrictHostKeyChecking=yes \
             -o ConnectTimeout=30 \
-            "$EC2_USERNAME@$EC2_HOST" << 'EOF'
-
-            set -e
-
-            cd /var/www/Music_Platform
-
-            echo "===== Pulling latest code ====="
-            git pull origin main
-
-            echo "===== Backend ====="
-            cd /var/www/Music_Platform/BACKEND_CODE
-
-            source venv/bin/activate
-
-            pip install -r requirements.txt
-
-            python manage.py migrate --noinput
-
-            python manage.py collectstatic --noinput
-
-            echo "===== Frontend ====="
-            cd /var/www/Music_Platform/frontend
-
-            npm ci
-
-            npm run build
-
-            echo "===== Restarting Django ====="
-            sudo systemctl restart music-platform
-
-            echo "===== Restarting ML ====="
-            sudo systemctl restart music-ml
-
-            echo "===== Reloading Nginx ====="
-            sudo systemctl reload nginx
-
-            echo "===== Checking services ====="
-            sudo systemctl is-active --quiet music-platform
-            sudo systemctl is-active --quiet music-ml
-            sudo systemctl is-active --quiet nginx
-
-            echo "================================"
-            echo "DEPLOYMENT SUCCESSFUL"
-            echo "================================"
-
-          EOF
+            "$EC2_USERNAME@$EC2_HOST" \
+            "set -e && \
+            cd /var/www/Music_Platform && \
+            echo '===== Pulling latest code =====' && \
+            git pull origin main && \
+            echo '===== Backend =====' && \
+            cd /var/www/Music_Platform/BACKEND_CODE && \
+            source venv/bin/activate && \
+            pip install -r requirements.txt && \
+            python manage.py migrate --noinput && \
+            python manage.py collectstatic --noinput && \
+            echo '===== Frontend =====' && \
+            cd /var/www/Music_Platform/frontend && \
+            npm ci && \
+            npm run build && \
+            echo '===== Restarting Django =====' && \
+            sudo systemctl restart music-platform && \
+            echo '===== Restarting ML =====' && \
+            sudo systemctl restart music-ml && \
+            echo '===== Reloading Nginx =====' && \
+            sudo systemctl reload nginx && \
+            echo '===== Checking services =====' && \
+            sudo systemctl is-active --quiet music-platform && \
+            sudo systemctl is-active --quiet music-ml && \
+            sudo systemctl is-active --quiet nginx && \
+            echo '================================' && \
+            echo 'DEPLOYMENT SUCCESSFUL' && \
+            echo '================================'"
