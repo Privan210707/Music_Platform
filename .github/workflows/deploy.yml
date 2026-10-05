@@ -44,7 +44,6 @@ jobs:
           echo "================================"
 
           ssh \
-            -vvv \
             -i "$KEY_FILE" \
             -p 22 \
             -o IdentitiesOnly=yes \
@@ -55,7 +54,7 @@ jobs:
             "echo SSH_CONNECTION_SUCCESSFUL"
 
           echo "================================"
-          echo "Pulling latest code"
+          echo "Deploying application"
           echo "================================"
 
           ssh \
@@ -66,35 +65,59 @@ jobs:
             -o StrictHostKeyChecking=yes \
             -o ConnectTimeout=30 \
             "ubuntu@50.16.9.251" \
-            "set -e && \
-            cd /var/www/Music_Platform && \
-            echo '===== Pulling latest code =====' && \
-            git pull origin main && \
-            echo '===== Backend =====' && \
-            cd /var/www/Music_Platform/BACKEND_CODE && \
-            source venv/bin/activate && \
-            pip install -r requirements.txt && \
-            python manage.py migrate --noinput && \
-            python manage.py collectstatic --noinput && \
-            echo '===== Frontend =====' && \
-            cd /var/www/Music_Platform/frontend && \
-            npm ci && \
-            npm run build && \
-            echo '===== Restarting Django =====' && \
-            sudo systemctl restart music-platform && \
-            echo '===== Restarting ML =====' && \
-            sudo systemctl restart music-ml && \
-            echo '===== Reloading Nginx =====' && \
-            sudo systemctl reload nginx && \
-            echo '===== Checking Django =====' && \
-            sudo systemctl is-active --quiet music-platform && \
-            echo 'Django: RUNNING' && \
-            echo '===== Checking ML =====' && \
-            sudo systemctl is-active --quiet music-ml && \
-            echo 'ML: RUNNING' && \
-            echo '===== Checking Nginx =====' && \
-            sudo systemctl is-active --quiet nginx && \
-            echo 'Nginx: RUNNING' && \
-            echo '================================' && \
-            echo 'DEPLOYMENT SUCCESSFUL' && \
-            echo '================================'"
+            "bash -lc '
+              set -e
+
+              echo \"===== Loading NVM / Node.js =====\"
+              source ~/.nvm/nvm.sh
+              nvm use 22
+
+              echo \"Node version:\"
+              node -v
+
+              echo \"NPM version:\"
+              npm -v
+
+              echo \"===== Pulling latest code =====\"
+              cd /var/www/Music_Platform
+              git pull origin main
+
+              echo \"===== Backend =====\"
+              cd /var/www/Music_Platform/BACKEND_CODE
+              source venv/bin/activate
+
+              pip install -r requirements.txt
+              python manage.py migrate --noinput
+              python manage.py collectstatic --noinput
+
+              echo \"===== Frontend =====\"
+              cd /var/www/Music_Platform/frontend
+
+              npm ci
+              npm run build
+
+              echo \"===== Restarting Django =====\"
+              sudo systemctl restart music-platform
+
+              echo \"===== Restarting ML =====\"
+              sudo systemctl restart music-ml
+
+              echo \"===== Reloading Nginx =====\"
+              sudo systemctl reload nginx
+
+              echo \"===== Checking Django =====\"
+              sudo systemctl is-active --quiet music-platform
+              echo \"Django: RUNNING\"
+
+              echo \"===== Checking ML =====\"
+              sudo systemctl is-active --quiet music-ml
+              echo \"ML: RUNNING\"
+
+              echo \"===== Checking Nginx =====\"
+              sudo systemctl is-active --quiet nginx
+              echo \"Nginx: RUNNING\"
+
+              echo \"================================\"
+              echo \"DEPLOYMENT SUCCESSFUL\"
+              echo \"================================\"
+            '"
