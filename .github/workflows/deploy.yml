@@ -17,22 +17,33 @@ jobs:
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
 
         run: |
-          mkdir -p ~/.ssh
+          mkdir -p "$HOME/.ssh"
 
-          printf '%s\n' "$EC2_SSH_KEY" > ~/.ssh/ec2_key
-          chmod 600 ~/.ssh/ec2_key
+          printf '%s\n' "$EC2_SSH_KEY" > "$HOME/.ssh/ec2_key"
+          chmod 600 "$HOME/.ssh/ec2_key"
 
-          ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
+          ssh-keyscan -H "$EC2_HOST" >> "$HOME/.ssh/known_hosts"
+
+          echo "===== Testing SSH connection ====="
+
+          ssh -vvv \
+            -i "$HOME/.ssh/ec2_key" \
+            -p 22 \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=30 \
+            "$EC2_USERNAME@$EC2_HOST" \
+            "echo SSH_CONNECTION_SUCCESS"
+
+          echo "===== Pulling latest code ====="
 
           ssh \
-            -i ~/.ssh/ec2_key \
+            -i "$HOME/.ssh/ec2_key" \
             -p 22 \
             -o StrictHostKeyChecking=yes \
             -o ConnectTimeout=30 \
             "$EC2_USERNAME@$EC2_HOST" \
             "set -e && \
             cd /var/www/Music_Platform && \
-            echo '===== Pulling latest code =====' && \
             git pull origin main && \
             echo '===== Backend =====' && \
             cd /var/www/Music_Platform/BACKEND_CODE && \
@@ -50,10 +61,15 @@ jobs:
             sudo systemctl restart music-ml && \
             echo '===== Reloading Nginx =====' && \
             sudo systemctl reload nginx && \
-            echo '===== Checking services =====' && \
+            echo '===== Checking Django =====' && \
             sudo systemctl is-active --quiet music-platform && \
+            echo 'Django: RUNNING' && \
+            echo '===== Checking ML =====' && \
             sudo systemctl is-active --quiet music-ml && \
+            echo 'ML: RUNNING' && \
+            echo '===== Checking Nginx =====' && \
             sudo systemctl is-active --quiet nginx && \
+            echo 'Nginx: RUNNING' && \
             echo '================================' && \
             echo 'DEPLOYMENT SUCCESSFUL' && \
             echo '================================'"
