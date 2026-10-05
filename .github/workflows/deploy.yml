@@ -12,38 +12,63 @@ jobs:
     steps:
       - name: Deploy to EC2
         env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
 
         run: |
-          mkdir -p "$HOME/.ssh"
+          set -e
 
-          printf '%s\n' "$EC2_SSH_KEY" > "$HOME/.ssh/ec2_key"
-          chmod 600 "$HOME/.ssh/ec2_key"
+          echo "================================"
+          echo "Preparing SSH"
+          echo "================================"
 
-          ssh-keyscan -H "$EC2_HOST" >> "$HOME/.ssh/known_hosts"
+          KEY_FILE="$RUNNER_TEMP/ec2_key"
+          KNOWN_HOSTS="$RUNNER_TEMP/known_hosts"
 
-          echo "===== Testing SSH connection ====="
+          printf '%s\n' "$EC2_SSH_KEY" > "$KEY_FILE"
+          chmod 600 "$KEY_FILE"
 
-          ssh -vvv \
-            -i "$HOME/.ssh/ec2_key" \
-            -p 22 \
-            -o StrictHostKeyChecking=yes \
-            -o ConnectTimeout=30 \
-            "$EC2_USERNAME@$EC2_HOST" \
-            "echo SSH_CONNECTION_SUCCESS"
+          echo "===== Checking SSH key ====="
 
-          echo "===== Pulling latest code ====="
+          ssh-keygen -y -f "$KEY_FILE" > "$RUNNER_TEMP/ec2_key.pub"
+
+          echo "SSH private key format: OK"
+
+          echo "===== Checking EC2 host ====="
+
+          ssh-keyscan -H -p 22 50.16.9.251 > "$KNOWN_HOSTS" 2>&1
+
+          echo "EC2 host reachable on SSH port 22"
+
+          echo "================================"
+          echo "Testing SSH connection"
+          echo "================================"
 
           ssh \
-            -i "$HOME/.ssh/ec2_key" \
+            -vvv \
+            -i "$KEY_FILE" \
             -p 22 \
+            -o IdentitiesOnly=yes \
+            -o UserKnownHostsFile="$KNOWN_HOSTS" \
             -o StrictHostKeyChecking=yes \
             -o ConnectTimeout=30 \
-            "$EC2_USERNAME@$EC2_HOST" \
+            "ubuntu@50.16.9.251" \
+            "echo SSH_CONNECTION_SUCCESSFUL"
+
+          echo "================================"
+          echo "Pulling latest code"
+          echo "================================"
+
+          ssh \
+            -i "$KEY_FILE" \
+            -p 22 \
+            -o IdentitiesOnly=yes \
+            -o UserKnownHostsFile="$KNOWN_HOSTS" \
+            -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=30 \
+            "ubuntu@50.16.9.251" \
             "set -e && \
             cd /var/www/Music_Platform && \
+            echo '===== Pulling latest code =====' && \
             git pull origin main && \
             echo '===== Backend =====' && \
             cd /var/www/Music_Platform/BACKEND_CODE && \
