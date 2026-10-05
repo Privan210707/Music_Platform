@@ -38,3 +38,4 @@ docker-compose.override.yml
 
 # Python generated files
 *.log
+BACKEND_CODE/staticfiles/

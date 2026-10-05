@@ -44,7 +44,7 @@ df = pd.read_csv(
 # FIND IMPORTANT COLUMNS
 # --------------------------------------------------
 
-track_col = None
+track_col = "track_name"
 artist_col = None
 genre_col = None
 
@@ -88,7 +88,7 @@ def recommend_songs(song_name, n=5):
     song_position = df.index.get_loc(song_index)
 
     distances, indices = knn.kneighbors(
-        feature_matrix[song_position],
+        feature_matrix[song_position].reshape(1, -1),
         n_neighbors=min(n + 1, len(df))
     )
 
