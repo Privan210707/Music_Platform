@@ -114,14 +114,16 @@ class EditProfileView(APIView):
             status=200
         )
 
+from datetime import datetime
+from zoneinfo import ZoneInfo 
 
 class HomeView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     def get(self, request):
         # Greeting
-        from datetime import datetime
-        hour = datetime.now().hour
+        india_time=datetime.now(ZoneInfo("Asia/Kolkata"))
+        hour=india_time.hour
         if hour < 12:
             greeting = "Good morning"
         elif hour < 16:

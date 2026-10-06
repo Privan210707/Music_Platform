@@ -304,78 +304,6 @@ class RecentVibesView(APIView):
             ]
         })    
 
-class VibeRecommendationView(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    def post(self, request):
-        mood = request.data.get("mood")
-        if not mood:
-            return Response(
-                {"error": "mood is required"},
-                status=400
-            )
-        mood = mood.strip()
-        valid_moods = [
-            "Happy",
-            "Chill",
-            "Sad",
-            "Romantic",
-            "Energetic",
-            "Focus"
-        ]
-        if mood not in valid_moods:
-            return Response(
-                {
-                    "error": "Invalid mood",
-                    "available_moods": valid_moods
-                },
-                status=400
-            )
-
-        # Save user's selected mood
-        MoodHistory.objects.create(
-            user=request.user,
-            mood=mood
-        )
-
-        # Temporary mood → genre mapping
-        mood_genres = {
-            "Happy": ["Pop", "Dance"],
-            "Chill": ["Lo-fi", "Indie", "Chill"],
-            "Sad": ["Sad", "Acoustic", "Indie"],
-            "Romantic": ["Romantic", "Love", "Pop"],
-            "Energetic": ["Rock", "Dance", "Pop"],
-            "Focus": ["Lo-fi", "Classical", "Instrumental"]
-        }
-
-        genres = mood_genres.get(mood, [])
-
-        # Get songs matching the mood genres
-        recommendations = Song.objects.filter(
-            genre__in=genres
-        ).order_by("-created_at")[:10]
-
-        # If not enough songs match,
-        # use latest songs as fallback
-        if recommendations.count() < 10:
-            existing_ids = recommendations.values_list(
-                "id",
-                flat=True
-            )
-            extra_songs = Song.objects.exclude(
-                id__in=existing_ids
-            ).order_by("-created_at")[:10]
-            recommendations = list(recommendations) + list(extra_songs)
-        else:
-            recommendations = list(recommendations)
-        return Response({
-            "mood": mood,
-            "recommendations": SongSerializer(
-                recommendations[:10],
-                many=True
-            ).data
-        })    
-
 
 class CreateVibePlaylistView(APIView):
     authentication_classes = [JWTAuthentication]
@@ -682,27 +610,23 @@ class ArtistFollowStatusView(APIView):
         })      
 
 
+
 import os
 import requests
 
 class MLRecommendationView(APIView):
-
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-
         song_name = request.data.get("song_name")
         n = request.data.get("n", 5)
-
         if not song_name:
             return Response(
                 {"error": "song_name is required"},
                 status=400
             )
-
         ml_api_url = os.getenv("ML_API_URL")
-
         try:
             response = requests.post(
                 f"{ml_api_url}/recommend",
@@ -712,13 +636,11 @@ class MLRecommendationView(APIView):
                 },
                 timeout=10
             )
-
         except requests.RequestException:
             return Response(
                 {"error": "ML recommendation service unavailable"},
                 status=503
             )
-
         if response.status_code != 200:
             return Response(
                 {
@@ -728,3 +650,129 @@ class MLRecommendationView(APIView):
                 status=response.status_code
             )
         return Response(response.json())
+
+
+class VibeRecommendationView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        mood = request.data.get("mood")
+        n = request.data.get("n", 5)
+        if not mood:
+            return Response(
+                {"error": "mood is required"},
+                status=400
+            )
+        mood = mood.strip()
+        valid_moods = [
+            "Happy",
+            "Chill",
+            "Sad",
+            "Romantic",
+            "Energetic",
+            "Focus"
+        ]
+        if mood not in valid_moods:
+            return Response(
+                {
+                    "error": "Invalid mood",
+                    "available_moods": valid_moods
+                },
+                status=400
+            )
+        # Save user's selected mood
+        MoodHistory.objects.create(
+            user=request.user,
+            mood=mood
+        )
+        # Call ML recommendation service
+        ml_api_url = os.getenv("ML_API_URL")
+        if not ml_api_url:
+            return Response(
+                {"error": "ML_API_URL is not configured"},
+                status=500
+            )
+        try:
+            response = requests.post(
+                f"{ml_api_url}/recommend/mood",
+                json={
+                    "mood": mood,
+                    "n": n
+                },
+                timeout=10
+            )
+        except requests.RequestException:
+            return Response(
+                {
+                    "error": "ML recommendation service unavailable"
+                },
+                status=503
+            )
+        if response.status_code != 200:
+            try:
+                details = response.json()
+            except ValueError:
+                details = response.text
+
+            return Response(
+                {
+                    "error": "ML recommendation failed",
+                    "details": details
+                },
+                status=response.status_code
+            )
+        
+        # Return ML recommendations
+        ml_data = response.json()
+        return Response({
+            "mood": mood,
+            "recommendations": ml_data.get(
+                "recommendations",
+                []
+            )
+        })    
+
+
+class StatisticsView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        ml_api_url = os.getenv("ML_API_URL")
+
+        if not ml_api_url:
+            return Response(
+                {"error": "ML_API_URL is not configured"},
+                status=500
+            )
+
+        try:
+            response = requests.get(
+                f"{ml_api_url}/replay/{request.user.id}",
+                timeout=10
+            )
+        except requests.RequestException:
+            return Response(
+                {
+                    "error": "ML statistics service unavailable"
+                },
+                status=503
+            )
+
+        if response.status_code != 200:
+            try:
+                details = response.json()
+            except ValueError:
+                details = response.text
+
+            return Response(
+                {
+                    "error": "ML statistics failed",
+                    "details": details
+                },
+                status=response.status_code
+            )
+
+        return Response(response.json())
+    

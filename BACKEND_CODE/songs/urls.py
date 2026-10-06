@@ -1,9 +1,10 @@
 from django.urls import path
 from .views import (SongListView,SongSearchView,RecentSearchCreateView,RecentSearchListView,RecentSearchDeleteView,
 ArtistListView,GenreListView,ArtistDetailView,AlbumDetailView,ArtistProfileView,SongPlayView,
-VibeMoodsView,RecentVibesView,VibeRecommendationView,CreateVibePlaylistView,
 SongUploadView,SongShareView,SharedSongView,
-ArtistFollowView,ArtistUnfollowView,ArtistFollowersView,ArtistFollowStatusView,MLRecommendationView)
+ArtistFollowView,ArtistUnfollowView,ArtistFollowersView,ArtistFollowStatusView,
+VibeMoodsView,RecentVibesView,CreateVibePlaylistView,
+MLRecommendationView,VibeRecommendationView,StatisticsView)
 
 
 urlpatterns = [
@@ -20,7 +21,6 @@ urlpatterns = [
     path("play/",SongPlayView.as_view(),name="song-play"),
     path("vibe-ai/moods/",VibeMoodsView.as_view(),name="vibe-ai-moods"),
     path("vibe-ai/recent/",RecentVibesView.as_view(),name="vibe-ai-recent"),
-    path("vibe-ai/recommend/",VibeRecommendationView.as_view(),name="vibe-ai-recommend"),
     path("vibe-ai/create-playlist/",CreateVibePlaylistView.as_view(),name="vibe-ai-create-playlist"),
     path("upload/",SongUploadView.as_view(),name="song-upload"),
     path("share/",SongShareView.as_view(),name="song-share"),
@@ -29,5 +29,10 @@ urlpatterns = [
     path("artists/<int:artist_id>/unfollow/",ArtistUnfollowView.as_view(),name="artist-unfollow"),
     path("artists/<int:artist_id>/followers/",ArtistFollowersView.as_view(),name="artist-followers"),
     path("artists/<int:artist_id>/follow-status/",ArtistFollowStatusView.as_view(),name="artist-folllow-status"),
-    path("ml-recommend/",MLRecommendationView.as_view(),name="ml-recommend")
+
+    #ML APIs
+    path("recommended/",MLRecommendationView.as_view(),name="ml-recommend"),
+    path("vibe-ai/recommend/",VibeRecommendationView.as_view(),name="vibe-ai-recommend"),
+    path("statistics/",StatisticsView.as_view(),name="statistics"),
+
 ]
