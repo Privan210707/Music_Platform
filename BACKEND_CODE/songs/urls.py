@@ -34,5 +34,4 @@ urlpatterns = [
     path("recommended/",MLRecommendationView.as_view(),name="ml-recommend"),
     path("vibe-ai/recommend/",VibeRecommendationView.as_view(),name="vibe-ai-recommend"),
     path("statistics/",StatisticsView.as_view(),name="statistics"),
-
 ]

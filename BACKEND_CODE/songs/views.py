@@ -655,15 +655,20 @@ class MLRecommendationView(APIView):
 class VibeRecommendationView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+
     def post(self, request):
+
         mood = request.data.get("mood")
         n = request.data.get("n", 5)
+
         if not mood:
             return Response(
                 {"error": "mood is required"},
                 status=400
             )
-        mood = mood.strip()
+
+        mood = mood.strip().capitalize()
+
         valid_moods = [
             "Happy",
             "Chill",
@@ -672,6 +677,7 @@ class VibeRecommendationView(APIView):
             "Energetic",
             "Focus"
         ]
+
         if mood not in valid_moods:
             return Response(
                 {
@@ -680,35 +686,55 @@ class VibeRecommendationView(APIView):
                 },
                 status=400
             )
+
         # Save user's selected mood
         MoodHistory.objects.create(
             user=request.user,
             mood=mood
         )
-        # Call ML recommendation service
+
+        # Map Vibe moods to ML moods
+        mood_mapping = {
+            "Happy": "happy",
+            "Chill": "party",
+            "Sad": "sad",
+            "Romantic": "love",
+            "Energetic": "party",
+            "Focus": "calm"
+        }
+
+        ml_mood = mood_mapping[mood]
+
+        # Get ML service URL
         ml_api_url = os.getenv("ML_API_URL")
+
         if not ml_api_url:
             return Response(
                 {"error": "ML_API_URL is not configured"},
                 status=500
             )
+
         try:
             response = requests.post(
-                f"{ml_api_url}/recommend/mood",
+                f"{ml_api_url.rstrip('/')}/recommend/mood",
                 json={
-                    "mood": mood,
+                    "mood": ml_mood,
                     "n": n
                 },
                 timeout=10
             )
-        except requests.RequestException:
+
+        except requests.RequestException as e:
             return Response(
                 {
-                    "error": "ML recommendation service unavailable"
+                    "error": "ML recommendation service unavailable",
+                    "details": str(e)
                 },
                 status=503
             )
+
         if response.status_code != 200:
+
             try:
                 details = response.json()
             except ValueError:
@@ -721,16 +747,17 @@ class VibeRecommendationView(APIView):
                 },
                 status=response.status_code
             )
-        
-        # Return ML recommendations
+
+        # Get ML response
         ml_data = response.json()
+
         return Response({
             "mood": mood,
             "recommendations": ml_data.get(
                 "recommendations",
                 []
             )
-        })    
+        })
 
 
 class StatisticsView(APIView):
