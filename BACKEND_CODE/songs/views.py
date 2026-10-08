@@ -6,7 +6,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from .models import Song,RecentSearch,Genre,Artist,Album,ArtistPlaylist,MoodHistory,SongShare,ArtistFollow
 from .serializers import SongSerializer,ArtistSerializer,GenreSerializer,AlbumSerializer,ArtistPlaylistSerializer
 from django.db.models import Q
-from library.models import RecentlyPlayed,LikedSong,Playlist,PlaylistSong
+from library.models import RecentlyPlayed,LikedSong,Playlist,PlaylistSong,ListeningEvent
 from rest_framework.permissions import AllowAny
 import cloudinary.uploader
 
@@ -223,22 +223,24 @@ class ArtistProfileView(APIView):
             ).data
         })    
 
-
-#Adding songs to Recently played
+import os
+import requests
 class SongPlayView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+
     def post(self, request):
 
-        # Get song ID from request
+        # Get song ID
         song_id = request.data.get("song_id")
+
         if not song_id:
             return Response(
                 {"error": "song_id is required"},
                 status=400
             )
-        
-        # Find the song
+
+        # Find song
         try:
             song = Song.objects.get(id=song_id)
         except Song.DoesNotExist:
@@ -246,28 +248,48 @@ class SongPlayView(APIView):
                 {"error": "Song not found"},
                 status=404
             )
-        
-        # Remove old recently-played entry
-        # so replaying a song moves it to the top
+
+        # Record every listening event in Django
+        listening_event = ListeningEvent.objects.create(
+            user=request.user,
+            song=song
+        )
+
+        # Update Recently Played
         RecentlyPlayed.objects.filter(
             user=request.user,
             song=song
         ).delete()
 
-        # Create new recently-played entry
         recently_played = RecentlyPlayed.objects.create(
             user=request.user,
             song=song
         )
+
+        # Send listening event to ML service
+        ml_api_url = os.getenv("ML_API_URL")
+
+        if ml_api_url and song.ml_track_id:
+            try:
+                ml_response = requests.post(
+                    f"{ml_api_url.rstrip('/')}/listen",
+                    json={
+                        "user_id": request.user.id,
+                        "track_id": song.ml_track_id
+                    },
+                    timeout=10
+                )
+
+            except requests.RequestException:
+                ml_response = None
+
         return Response({
             "message": "Song played successfully",
-
             "song": SongSerializer(song).data,
-
             "played_at": recently_played.played_at
-        }, status=201)    
+        }, status=201)
 
-
+    
 #VibeAI APIs
 
 class VibeMoodsView(APIView):
@@ -752,12 +774,9 @@ class VibeRecommendationView(APIView):
         ml_data = response.json()
 
         return Response({
-            "mood": mood,
-            "recommendations": ml_data.get(
-                "recommendations",
-                []
-            )
-        })
+    "mood": mood,
+    "recommendations": ml_data.get("recommendations", [])
+    })
 
 
 class StatisticsView(APIView):

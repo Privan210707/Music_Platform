@@ -120,3 +120,22 @@ class SavedArtist(models.Model):
         unique_together = ("user", "artist")
     def __str__(self):
         return f"{self.user.email} - {self.artist.name}"
+    
+
+class ListeningEvent(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="listening_events"
+    )
+    song = models.ForeignKey(
+        Song,
+        on_delete=models.CASCADE,
+        related_name="listening_events"
+    )
+    played_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"{self.user.email} - {self.song.title} - {self.played_at}"    

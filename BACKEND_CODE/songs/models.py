@@ -9,6 +9,12 @@ class Song(models.Model):
     genre = models.CharField(max_length=100)
     image_url = models.URLField(blank=True)
     audio_url = models.URLField(blank=True)
+
+    ml_track_id=models.CharField(
+        max_length=255,
+        blank=True,
+        null=True
+    )
     album=models.ForeignKey("Album",on_delete=models.SET_NULL,null=True,blank=True,related_name="songs")
     created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
