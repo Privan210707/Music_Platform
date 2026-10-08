@@ -795,7 +795,7 @@ class StatisticsView(APIView):
 
         try:
             response = requests.get(
-                f"{ml_api_url}/replay/{request.user.id}",
+                f"{ml_api_url.rstrip('/')}/replay/{request.user.id}",
                 timeout=10
             )
         except requests.RequestException:
